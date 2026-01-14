@@ -1,0 +1,6 @@
+lib
+contracts/cache
+out
+prompts
+AGENTS.md
+.github
