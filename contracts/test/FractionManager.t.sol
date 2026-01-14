@@ -117,7 +117,7 @@ contract FractionManagerTest is Test {
 
     function testSetFractionSpecRevertsForNonOwner() public {
         vm.prank(user1);
-        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, user1));
+        vm.expectRevert("Unauthorized");
         fractionManager.setFractionSpec(TOKEN_ID, TOTAL_SUPPLY, MIN_UNIT_SIZE, LOCKUP_PERIOD);
     }
 

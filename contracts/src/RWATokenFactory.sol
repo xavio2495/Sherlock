@@ -24,6 +24,7 @@ contract RWATokenFactory is ERC1155, Ownable, ReentrancyGuard {
         uint256 minFractionSize;
         uint256 mintTimestamp;
         uint256 oraclePriceAtMint;
+        bytes32 priceId;
         bool verified;
     }
 
@@ -36,20 +37,34 @@ contract RWATokenFactory is ERC1155, Ownable, ReentrancyGuard {
 
     // ============ Events ============
     
-    event RWATokenMinted(
+    event AssetMinted(
         uint256 indexed tokenId,
         address indexed issuer,
         string documentHash,
         uint256 totalValue,
-        uint256 fractionCount
+        uint256 fractionCount,
+        bytes32 priceId,
+        uint256 oraclePrice
     );
 
     event FractionPurchased(
         uint256 indexed tokenId,
         address indexed buyer,
         uint256 amount,
-        uint256 price
+        uint256 totalCost
     );
+
+    // ============ Custom Errors ============
+    
+    error IssuerNotEligible();
+    error BuyerNotEligible();
+    error InvalidTotalValue();
+    error InvalidFractionCount();
+    error InvalidMinFractionSize();
+    error AssetNotFound();
+    error InsufficientFractionsAvailable();
+    error InsufficientPayment();
+    error PriceNotAvailable();
 
     // ============ Constructor ============
     
@@ -72,7 +87,9 @@ contract RWATokenFactory is ERC1155, Ownable, ReentrancyGuard {
      * @param totalValue Total value of the asset in USD cents
      * @param fractionCount Number of fractions to create
      * @param minFractionSize Minimum fraction size for transfers
+     * @param lockupWeeks Lockup period in weeks (0 for no lockup)
      * @param zkProof Zero-knowledge proof for issuer eligibility
+     * @param priceId Pyth price feed ID for asset valuation
      * @return tokenId The ID of the newly minted token
      */
     function mintRWAToken(
@@ -80,14 +97,48 @@ contract RWATokenFactory is ERC1155, Ownable, ReentrancyGuard {
         uint256 totalValue,
         uint256 fractionCount,
         uint256 minFractionSize,
-        bytes memory zkProof
-    ) external returns (uint256 tokenId) {
-        // TODO: Implement ZK proof verification for issuer
-        // TODO: Fetch current oracle price
-        // TODO: Store asset metadata
-        // TODO: Mint ERC-1155 tokens
-        // TODO: Set fraction specs in FractionManager
-        // TODO: Emit RWATokenMinted event
+        uint256 lockupWeeks,
+        bytes memory zkProof,
+        bytes32 priceId
+    ) external nonReentrant returns (uint256 tokenId) {
+        // Validate inputs
+        if (totalValue == 0) revert InvalidTotalValue();
+        if (fractionCount == 0) revert InvalidFractionCount();
+        if (minFractionSize == 0 || minFractionSize > fractionCount) revert InvalidMinFractionSize();
+        
+        // Verify issuer has registered commitment (check eligibility)
+        (, , bool isActive) = zkVerifier.userCommitments(msg.sender);
+        if (!isActive) revert IssuerNotEligible();
+        
+        // Fetch current oracle price
+        (int64 price, uint64 timestamp) = pythOracle.getLatestPrice(priceId);
+        if (price <= 0 || timestamp == 0) revert PriceNotAvailable();
+        
+        // Generate new token ID
+        tokenId = nextTokenId++;
+        
+        // Store asset metadata
+        assets[tokenId] = AssetMetadata({
+            issuer: msg.sender,
+            documentHash: documentHash,
+            totalValue: totalValue,
+            fractionCount: fractionCount,
+            minFractionSize: minFractionSize,
+            mintTimestamp: block.timestamp,
+            oraclePriceAtMint: uint256(uint64(price)),
+            priceId: priceId,
+            verified: true
+        });
+        
+        // Set fraction specs in FractionManager (convert weeks to days)
+        uint256 lockupDays = lockupWeeks * 7;
+        fractionManager.setFractionSpec(tokenId, fractionCount, minFractionSize, lockupDays);
+        
+        // Mint all fractions to issuer
+        _mint(msg.sender, tokenId, fractionCount, "");
+        
+        // Emit event
+        emit AssetMinted(tokenId, msg.sender, documentHash, totalValue, fractionCount, priceId, uint256(uint64(price)));
     }
 
     /**
@@ -101,11 +152,38 @@ contract RWATokenFactory is ERC1155, Ownable, ReentrancyGuard {
         uint256 amount,
         bytes memory buyerZKProof
     ) external payable nonReentrant {
-        // TODO: Verify buyer eligibility via ZK proof
-        // TODO: Check minimum fraction size
-        // TODO: Calculate price based on oracle data
-        // TODO: Transfer fractions to buyer
-        // TODO: Emit FractionPurchased event
+        AssetMetadata storage asset = assets[tokenId];
+        
+        // Check asset exists
+        if (asset.issuer == address(0)) revert AssetNotFound();
+        
+        // Verify buyer eligibility (check if they have registered commitment)
+        (, , bool buyerIsActive) = zkVerifier.userCommitments(msg.sender);
+        if (!buyerIsActive) revert BuyerNotEligible();
+        
+        // Check issuer has enough fractions
+        uint256 issuerBalance = balanceOf(asset.issuer, tokenId);
+        if (issuerBalance < amount) revert InsufficientFractionsAvailable();
+        
+        // Calculate cost based on asset total value
+        uint256 cost = (asset.totalValue * amount) / asset.fractionCount;
+        if (msg.value < cost) revert InsufficientPayment();
+        
+        // Transfer payment to contract owner
+        (bool success, ) = owner().call{value: cost}("");
+        require(success, "Payment transfer failed");
+        
+        // Refund excess payment
+        if (msg.value > cost) {
+            (bool refundSuccess, ) = msg.sender.call{value: msg.value - cost}("");
+            require(refundSuccess, "Refund failed");
+        }
+        
+        // Transfer fractions from issuer to buyer
+        _safeTransferFrom(asset.issuer, msg.sender, tokenId, amount, "");
+        
+        // Emit event
+        emit FractionPurchased(tokenId, msg.sender, amount, cost);
     }
 
     /**
@@ -118,6 +196,50 @@ contract RWATokenFactory is ERC1155, Ownable, ReentrancyGuard {
     }
 
     /**
+     * @notice Override safeTransferFrom to integrate FractionManager validation
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 id,
+        uint256 value,
+        bytes memory data
+    ) public override {
+        // Validate transfer through FractionManager (reverts on failure)
+        fractionManager.validateTransfer(id, value, from);
+        
+        // Check recipient eligibility (must have registered commitment)
+        (, , bool toIsActive) = zkVerifier.userCommitments(to);
+        if (!toIsActive) revert BuyerNotEligible();
+        
+        // Call parent implementation
+        super.safeTransferFrom(from, to, id, value, data);
+    }
+
+    /**
+     * @notice Override safeBatchTransferFrom to integrate FractionManager validation
+     */
+    function safeBatchTransferFrom(
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory values,
+        bytes memory data
+    ) public override {
+        // Validate each transfer through FractionManager
+        for (uint256 i = 0; i < ids.length; i++) {
+            fractionManager.validateTransfer(ids[i], values[i], from);
+        }
+        
+        // Check recipient eligibility
+        (, , bool batchToIsActive) = zkVerifier.userCommitments(to);
+        if (!batchToIsActive) revert BuyerNotEligible();
+        
+        // Call parent implementation
+        super.safeBatchTransferFrom(from, to, ids, values, data);
+    }
+
+    /**
      * @notice Update the URI for token metadata
      * @param newuri New base URI for token metadata
      */
@@ -126,10 +248,26 @@ contract RWATokenFactory is ERC1155, Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Emergency pause/unpause functionality
-     * @dev Can be expanded with Pausable pattern from OpenZeppelin
+     * @notice Withdraw contract balance (emergency function)
      */
-    function pause() external onlyOwner {
-        // TODO: Implement pause functionality
+    function withdraw() external onlyOwner {
+        (bool success, ) = owner().call{value: address(this).balance}("");
+        require(success, "Withdrawal failed");
+    }
+
+    /**
+     * @notice Burn fractions (implements IRWATokenFactory interface for FractionManager)
+     */
+    function burn(address account, uint256 tokenId, uint256 amount) external {
+        require(msg.sender == address(fractionManager), "Only FractionManager can burn");
+        _burn(account, tokenId, amount);
+    }
+
+    /**
+     * @notice Mint whole token (implements IRWATokenFactory interface for FractionManager)
+     */
+    function mint(address account, uint256 tokenId, uint256 amount) external {
+        require(msg.sender == address(fractionManager), "Only FractionManager can mint");
+        _mint(account, tokenId, amount, "");
     }
 }

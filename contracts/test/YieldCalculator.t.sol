@@ -83,8 +83,9 @@ contract YieldCalculatorTest is Test {
         vm.stopPrank();
     }
 
-    function testFailExcessiveAPY() public {
+    function test_RevertWhen_ExcessiveAPY() public {
         vm.prank(owner);
+        vm.expectRevert();
         // Should fail with APY > 100%
         yieldCalculator.setYieldConfig(1, 1000001);
     }

@@ -94,7 +94,8 @@ contract FractionManager is Ownable {
         uint256 totalSupply,
         uint256 minUnitSize,
         uint256 lockupPeriod
-    ) external onlyOwner {
+    ) external {
+        require(msg.sender == owner() || msg.sender == address(rwaFactory), "Unauthorized");
         if (totalSupply == 0) revert InvalidTotalSupply();
         if (minUnitSize == 0 || minUnitSize > totalSupply) revert InvalidMinUnitSize();
 
