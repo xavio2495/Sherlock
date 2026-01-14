@@ -16,7 +16,7 @@ contract YieldCalculatorTest is Test {
         vm.startPrank(owner);
         
         pythOracle = new PythOracleReader(mockPythContract);
-        yieldCalculator = new YieldCalculator(address(pythOracle));
+        yieldCalculator = new YieldCalculator(payable(address(pythOracle)));
         
         vm.stopPrank();
     }

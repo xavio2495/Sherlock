@@ -55,7 +55,7 @@ contract RWATokenFactory is ERC1155, Ownable, ReentrancyGuard {
     
     constructor(
         address _zkVerifier,
-        address _pythOracle,
+        address payable _pythOracle,
         address _fractionManager
     ) ERC1155("") Ownable(msg.sender) {
         zkVerifier = ZKVerifier(_zkVerifier);

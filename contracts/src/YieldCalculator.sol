@@ -34,7 +34,7 @@ contract YieldCalculator is Ownable {
 
     // ============ Constructor ============
     
-    constructor(address _pythOracle) Ownable(msg.sender) {
+    constructor(address payable _pythOracle) Ownable(msg.sender) {
         pythOracle = PythOracleReader(_pythOracle);
     }
 
@@ -148,7 +148,7 @@ contract YieldCalculator is Ownable {
      * @notice Update PythOracleReader address
      * @param newOracle New oracle address
      */
-    function setPythOracle(address newOracle) external onlyOwner {
+    function setPythOracle(address payable newOracle) external onlyOwner {
         pythOracle = PythOracleReader(newOracle);
     }
 

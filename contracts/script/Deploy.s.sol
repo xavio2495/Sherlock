@@ -51,7 +51,7 @@ contract DeployScript is Script {
 
         // Step 4: Deploy YieldCalculator
         console.log("4. Deploying YieldCalculator...");
-        YieldCalculator yieldCalculator = new YieldCalculator(address(pythOracle));
+        YieldCalculator yieldCalculator = new YieldCalculator(payable(address(pythOracle)));
         console.log("   YieldCalculator deployed at:", address(yieldCalculator));
         console.log("");
 
@@ -59,7 +59,7 @@ contract DeployScript is Script {
         console.log("5. Deploying RWATokenFactory...");
         RWATokenFactory rwaFactory = new RWATokenFactory(
             address(zkVerifier),
-            address(pythOracle),
+            payable(address(pythOracle)),
             address(fractionManager)
         );
         console.log("   RWATokenFactory deployed at:", address(rwaFactory));

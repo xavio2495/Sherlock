@@ -31,7 +31,7 @@ contract RWATokenFactoryTest is Test {
         // Deploy main factory
         factory = new RWATokenFactory(
             address(zkVerifier),
-            address(pythOracle),
+            payable(address(pythOracle)),
             address(fractionManager)
         );
 
