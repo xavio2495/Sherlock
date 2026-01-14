@@ -9,6 +9,7 @@ via_ir = true
 evm_version = "cancun"
 gas_reports = ["*"]
 ignored_error_codes = [6546]
+fs_permissions = [{ access = "read-write", path = "./" }]
 
 remappings = [
     "@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/",

@@ -4,3 +4,5 @@ out
 prompts
 AGENTS.md
 .github
+contracts/.env
+contracts/broadcast
