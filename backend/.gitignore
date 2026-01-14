@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+
+# ZK Circuit artifacts
+circuits/**/*.r1cs
+circuits/**/*.wasm
+circuits/**/*.zkey
+circuits/**/*.wtns
+circuits/**/*.sym
+circuits/**/pot*_*.ptau
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+tmp/
+temp/
