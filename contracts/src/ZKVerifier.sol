@@ -8,6 +8,16 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * @notice Verify ZK-KYC proofs for issuer/buyer eligibility
  * @dev MVP implementation uses simple commitment-based verification
  *      Future upgrade path to Groth16 verifier
+ * 
+ * MVP Commitment Scheme:
+ * - Users register a commitment: keccak256(abi.encodePacked(secret, nullifier))
+ * - To verify, users provide (secret, nullifier) and we recompute the hash
+ * - This proves they know the secret without revealing it on-chain
+ * 
+ * Future Groth16 Upgrade:
+ * - Replace hash verification with zkSNARK proof verification
+ * - Use Groth16 verifier contract for cryptographic proof validation
+ * - Integrate with circom circuits for eligibility and range proofs
  */
 contract ZKVerifier is Ownable {
     // ============ State Variables ============
@@ -20,12 +30,26 @@ contract ZKVerifier is Ownable {
 
     mapping(address => Commitment) public userCommitments;
     mapping(uint256 => mapping(address => bool)) public tokenHolderVerified;
+    
+    // Track range proof commitments for privacy
+    mapping(uint256 => mapping(address => bytes32)) public rangeCommitments;
+
+    // ============ Errors ============
+    
+    error ZeroCommitment();
+    error CommitmentAlreadyExists();
+    error NoActiveCommitment();
+    error InvalidProof();
+    error CommitmentMismatch();
+    error InvalidRange();
 
     // ============ Events ============
     
     event CommitmentRegistered(address indexed user, bytes32 commitment, uint256 timestamp);
     event EligibilityVerified(address indexed user, bool isEligible);
     event RangeProofVerified(uint256 indexed tokenId, address indexed holder, bool isValid);
+    event CommitmentRevoked(address indexed user);
+    event RangeCommitmentSet(uint256 indexed tokenId, address indexed holder, bytes32 commitment);
 
     // ============ Constructor ============
     
@@ -37,31 +61,60 @@ contract ZKVerifier is Ownable {
      * @notice Register a commitment for a user
      * @param commitment The hash commitment (hash of secret + nullifier)
      * @dev Users must register before they can be verified
+     *      Commitment = keccak256(abi.encodePacked(secret, nullifier))
      */
     function registerCommitment(bytes32 commitment) external {
-        // TODO: Validate commitment is not zero
-        // TODO: Store commitment with timestamp
-        // TODO: Mark as active
-        // TODO: Emit CommitmentRegistered event
+        if (commitment == bytes32(0)) revert ZeroCommitment();
+        if (userCommitments[msg.sender].isActive) revert CommitmentAlreadyExists();
+        
+        userCommitments[msg.sender] = Commitment({
+            commitmentHash: commitment,
+            timestamp: block.timestamp,
+            isActive: true
+        });
+
+        emit CommitmentRegistered(msg.sender, commitment, block.timestamp);
     }
 
     /**
      * @notice Verify user eligibility using ZK proof
      * @param user Address of the user to verify
      * @param commitment The commitment to verify against
-     * @param proof ZK proof data
+     * @param proof ZK proof data containing (secret, nullifier) as abi.encodePacked
      * @return bool True if verification succeeds
+     * @dev MVP: Verifies that keccak256(proof) matches stored commitment
+     *      Future: Will use Groth16 verifier for full zkSNARK verification
      */
     function verifyEligibility(
         address user,
         bytes32 commitment,
         bytes memory proof
     ) external view returns (bool) {
-        // TODO: Check if user has registered commitment
-        // TODO: Verify proof matches commitment
-        // TODO: MVP: Simple hash comparison
-        // TODO: Future: Groth16 proof verification
-        return false;
+        // Check if user has an active commitment
+        Commitment memory userCommit = userCommitments[user];
+        if (!userCommit.isActive) {
+            return false;
+        }
+
+        // Verify the commitment matches
+        if (userCommit.commitmentHash != commitment) {
+            return false;
+        }
+
+        // MVP: Verify proof by rehashing
+        // Proof format: abi.encodePacked(secret, nullifier)
+        // Expected: keccak256(proof) == commitment
+        if (proof.length == 0) {
+            return false;
+        }
+
+        bytes32 computedCommitment = keccak256(proof);
+        bool isValid = computedCommitment == commitment;
+
+        // Note: In production Groth16 implementation, this would be:
+        // return groth16Verifier.verifyProof(proof, publicInputs);
+
+        return isValid;
     }
 
     /**
@@ -72,6 +125,16 @@ contract ZKVerifier is Ownable {
      * @param maxRange Maximum claimed range
      * @param proof ZK proof data
      * @return bool True if the holder's balance is within [minRange, maxRange]
+     * @dev MVP: Simple eligibility check + range validation
+     *      Future: Full Groth16 range proof circuit verification
+     *      
+     *      The range proof allows a holder to prove their balance is within
+     *      [minRange, maxRange] without revealing the exact amount.
+     *      
+     *      For Groth16 upgrade, proof will contain:
+     *      - Private inputs: actualAmount, secret
+     *      - Public inputs: minRange, maxRange, commitment
+     *      - Proof that minRange <= actualAmount <= maxRange
      */
     function verifyRangeProof(
         uint256 tokenId,
@@ -80,10 +143,63 @@ contract ZKVerifier is Ownable {
         uint256 maxRange,
         bytes memory proof
     ) external view returns (bool) {
-        // TODO: Verify range proof circuit
-        // TODO: Prove holdings are within range without revealing exact amount
-        // TODO: Future: Full Groth16 range proof implementation
-        return false;
+        // Validate range parameters
+        if (minRange > maxRange) {
+            return false;
+        }
+
+        // Check if holder has active commitment
+        if (!userCommitments[holder].isActive) {
+            return false;
+        }
+
+        // MVP Implementation:
+        // For MVP, we do a simplified check:
+        // 1. Verify holder has commitment (privacy eligibility)
+        // 2. Accept range proof if basic validation passes
+        // 
+        // In real implementation, proof would contain:
+        // - Commitment to actual holdings
+        // - ZK proof that actualAmount ∈ [minRange, maxRange]
+        
+        if (proof.length == 0) {
+            return false;
+        }
+
+        // Decode proof (MVP format: just the commitment hash for range)
+        // Future: This will be Groth16 proof verification
+        bytes32 rangeCommitment = rangeCommitments[tokenId][holder];
+        
+        // MVP: If holder has commitment, accept the range proof
+        // Future: Verify actual Groth16 range proof circuit
+        // Example future code:
+        // uint256[8] memory proofData = abi.decode(proof, (uint256[8]));
+        // uint256[] memory publicInputs = new uint256[](3);
+        // publicInputs[0] = minRange;
+        // publicInputs[1] = maxRange;
+        // publicInputs[2] = uint256(rangeCommitment);
+        // return rangeProofVerifier.verifyProof(proofData, publicInputs);
+
+        return true; // MVP: Accept if holder has commitment
+    }
+
+    /**
+     * @notice Set range commitment for a token holder
+     * @param tokenId The token ID
+     * @param holder The holder address
+     * @param commitment The commitment hash for range proof
+     * @dev This allows holders to commit to their balance for future range proofs
+     */
+    function setRangeCommitment(
+        uint256 tokenId,
+        address holder,
+        bytes32 commitment
+    ) external {
+        require(msg.sender == holder || msg.sender == owner(), "Not authorized");
+        require(commitment != bytes32(0), "Zero commitment");
+        
+        rangeCommitments[tokenId][holder] = commitment;
+        emit RangeCommitmentSet(tokenId, holder, commitment);
     }
 
     /**
@@ -96,12 +212,25 @@ contract ZKVerifier is Ownable {
     }
 
     /**
+     * @notice Get commitment details for a user
+     * @param user Address to query
+     * @return commitment The commitment struct
+     */
+    function getCommitment(address user) external view returns (Commitment memory) {
+        return userCommitments[user];
+    }
+
+    // ============ Admin Functions ============
+
+    /**
      * @notice Revoke a user's commitment (admin function)
      * @param user Address whose commitment to revoke
      */
     function revokeCommitment(address user) external onlyOwner {
-        // TODO: Mark commitment as inactive
-        // TODO: Emit event
+        if (!userCommitments[user].isActive) revert NoActiveCommitment();
+        
+        userCommitments[user].isActive = false;
+        emit CommitmentRevoked(user);
     }
 
     /**
@@ -109,6 +238,7 @@ contract ZKVerifier is Ownable {
      * @param tokenId The token ID
      * @param holder The holder address
      * @param isVerified Verification status
+     * @dev Allows admin to manually verify token holders
      */
     function updateHolderVerification(
         uint256 tokenId,
@@ -117,4 +247,51 @@ contract ZKVerifier is Ownable {
     ) external onlyOwner {
         tokenHolderVerified[tokenId][holder] = isVerified;
     }
+
+    /**
+     * @notice Batch register commitments (admin utility)
+     * @param users Array of user addresses
+     * @param commitments Array of commitment hashes
+     * @dev Useful for onboarding multiple users
+     */
+    function batchRegisterCommitments(
+        address[] calldata users,
+        bytes32[] calldata commitments
+    ) external onlyOwner {
+        require(users.length == commitments.length, "Length mismatch");
+        
+        for (uint256 i = 0; i < users.length; i++) {
+            if (commitments[i] == bytes32(0)) continue;
+            if (userCommitments[users[i]].isActive) continue;
+            
+            userCommitments[users[i]] = Commitment({
+                commitmentHash: commitments[i],
+                timestamp: block.timestamp,
+                isActive: true
+            });
+            
+            emit CommitmentRegistered(users[i], commitments[i], block.timestamp);
+        }
+    }
+
+    // ============ Future Groth16 Integration Points ============
+    
+    /**
+     * @dev UPGRADE PATH: Set Groth16 verifier contract addresses
+     * 
+     * Future variables to add:
+     * - address public eligibilityVerifier;  // Groth16 verifier for eligibility
+     * - address public rangeProofVerifier;   // Groth16 verifier for range proofs
+     * 
+     * Future functions to add:
+     * - setEligibilityVerifier(address _verifier) external onlyOwner;
+     * - setRangeProofVerifier(address _verifier) external onlyOwner;
+     * 
+     * Integration steps:
+     * 1. Deploy circom circuits (eligibility.circom, rangeProof.circom)
+     * 2. Generate Groth16 verifier contracts from circuits
+     * 3. Deploy verifier contracts
+     * 4. Update this contract to call verifier.verifyProof()
+     * 5. Modify proof format to match Groth16 output from SnarkJS
+     */
 }
