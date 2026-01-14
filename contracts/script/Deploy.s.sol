@@ -43,9 +43,9 @@ contract DeployScript is Script {
         console.log("   PythOracleReader deployed at:", address(pythOracle));
         console.log("");
 
-        // Step 3: Deploy FractionManager
+        // Step 3: Deploy FractionManager (with placeholder factory address)
         console.log("3. Deploying FractionManager...");
-        FractionManager fractionManager = new FractionManager();
+        FractionManager fractionManager = new FractionManager(address(pythOracle)); // Temporary placeholder
         console.log("   FractionManager deployed at:", address(fractionManager));
         console.log("");
 
@@ -63,6 +63,12 @@ contract DeployScript is Script {
             address(fractionManager)
         );
         console.log("   RWATokenFactory deployed at:", address(rwaFactory));
+        console.log("");
+
+        // Step 6: Update FractionManager with correct RWAFactory address
+        console.log("6. Updating FractionManager with RWAFactory address...");
+        fractionManager.setRWAFactory(address(rwaFactory));
+        console.log("   FractionManager updated successfully");
         console.log("");
 
         vm.stopBroadcast();

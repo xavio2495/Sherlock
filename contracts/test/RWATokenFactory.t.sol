@@ -26,7 +26,7 @@ contract RWATokenFactoryTest is Test {
         // Deploy dependency contracts
         zkVerifier = new ZKVerifier();
         pythOracle = new PythOracleReader(mockPythContract);
-        fractionManager = new FractionManager();
+        fractionManager = new FractionManager(address(pythOracle)); // Placeholder
 
         // Deploy main factory
         factory = new RWATokenFactory(
@@ -34,6 +34,9 @@ contract RWATokenFactoryTest is Test {
             payable(address(pythOracle)),
             address(fractionManager)
         );
+
+        // Update FractionManager with correct factory address
+        fractionManager.setRWAFactory(address(factory));
 
         vm.stopPrank();
     }
