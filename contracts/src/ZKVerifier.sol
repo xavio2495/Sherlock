@@ -156,7 +156,8 @@ contract ZKVerifier is Ownable {
         // MVP Implementation:
         // For MVP, we do a simplified check:
         // 1. Verify holder has commitment (privacy eligibility)
-        // 2. Accept range proof if basic validation passes
+        // 2. Decode actual amount from proof and verify it's within range
+        // 3. Verify commitment matches
         // 
         // In real implementation, proof would contain:
         // - Commitment to actual holdings
@@ -166,21 +167,31 @@ contract ZKVerifier is Ownable {
             return false;
         }
 
-        // Decode proof (MVP format: just the commitment hash for range)
+        // Decode proof (MVP format: abi.encodePacked(uint256 actualAmount))
         // Future: This will be Groth16 proof verification
-        bytes32 rangeCommitment = rangeCommitments[tokenId][holder];
+        if (proof.length < 32) {
+            return false;
+        }
         
-        // MVP: If holder has commitment, accept the range proof
-        // Future: Verify actual Groth16 range proof circuit
-        // Example future code:
-        // uint256[8] memory proofData = abi.decode(proof, (uint256[8]));
-        // uint256[] memory publicInputs = new uint256[](3);
-        // publicInputs[0] = minRange;
-        // publicInputs[1] = maxRange;
-        // publicInputs[2] = uint256(rangeCommitment);
-        // return rangeProofVerifier.verifyProof(proofData, publicInputs);
+        uint256 actualAmount;
+        assembly {
+            actualAmount := mload(add(proof, 32))
+        }
+        
+        // MVP: Verify actual amount is within claimed range
+        if (actualAmount < minRange || actualAmount > maxRange) {
+            return false;
+        }
+        
+        // Verify range commitment matches
+        bytes32 expectedCommitment = keccak256(abi.encodePacked(tokenId, holder, actualAmount));
+        bytes32 storedCommitment = rangeCommitments[tokenId][holder];
+        
+        if (storedCommitment == bytes32(0) || storedCommitment != expectedCommitment) {
+            return false;
+        }
 
-        return true; // MVP: Accept if holder has commitment
+        return true;
     }
 
     /**

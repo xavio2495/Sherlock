@@ -117,18 +117,19 @@ contract ZKVerifierTest is Test {
         vm.prank(user1);
         zkVerifier.registerCommitment(commitment);
         
-        // Set range commitment for token
+        // Set range commitment for token with actual amount
         uint256 tokenId = 1;
-        bytes32 rangeCommitment = keccak256(abi.encodePacked("amount_commitment"));
+        uint256 actualAmount = 50; // Holder has 50 tokens
+        bytes32 rangeCommitment = keccak256(abi.encodePacked(tokenId, user1, actualAmount));
         vm.prank(user1);
         zkVerifier.setRangeCommitment(tokenId, user1, rangeCommitment);
         
-        // Create mock range proof
+        // Create range proof with actual amount (MVP format)
         uint256 minRange = 10;
         uint256 maxRange = 100;
-        bytes memory proof = abi.encodePacked("range_proof_data");
+        bytes memory proof = abi.encodePacked(actualAmount); // Proof contains actual amount
         
-        // Verify range proof (MVP accepts if user has commitment)
+        // Verify range proof (MVP verifies actualAmount is in [minRange, maxRange])
         bool isValid = zkVerifier.verifyRangeProof(tokenId, user1, minRange, maxRange, proof);
         assertTrue(isValid);
     }
