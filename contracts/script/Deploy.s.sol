@@ -51,7 +51,7 @@ contract DeployScript is Script {
 
         // Step 4: Deploy YieldCalculator
         console.log("4. Deploying YieldCalculator...");
-        YieldCalculator yieldCalculator = new YieldCalculator(payable(address(pythOracle)));
+        YieldCalculator yieldCalculator = new YieldCalculator(payable(address(pythOracle)), address(0)); // Placeholder for rwaFactory
         console.log("   YieldCalculator deployed at:", address(yieldCalculator));
         console.log("");
 

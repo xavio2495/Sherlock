@@ -4,6 +4,32 @@ pragma solidity ^0.8.24;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PythOracleReader.sol";
 
+interface IRWATokenFactoryForYield {
+    struct AssetMetadata {
+        address issuer;
+        string documentHash;
+        uint256 totalValue;
+        uint256 fractionCount;
+        uint256 minFractionSize;
+        uint256 mintTimestamp;
+        uint256 oraclePriceAtMint;
+        bytes32 priceId;
+        bool verified;
+    }
+    
+    function assets(uint256 tokenId) external view returns (
+        address issuer,
+        string memory documentHash,
+        uint256 totalValue,
+        uint256 fractionCount,
+        uint256 minFractionSize,
+        uint256 mintTimestamp,
+        uint256 oraclePriceAtMint,
+        bytes32 priceId,
+        bool verified
+    );
+}
+
 /**
  * @title YieldCalculator
  * @notice Compute yield/return based on oracle data
@@ -12,152 +38,112 @@ import "./PythOracleReader.sol";
 contract YieldCalculator is Ownable {
     // ============ State Variables ============
     
-    struct YieldConfig {
-        uint256 baseAPY;          // Base annual percentage yield (in basis points, 1 bp = 0.01%)
-        uint256 lastUpdateTime;
-        bool isActive;
-    }
-
     PythOracleReader public pythOracle;
+    IRWATokenFactoryForYield public rwaFactory;
     
-    mapping(uint256 => YieldConfig) public tokenYieldConfig;
+    // Configurable base APY (stored as percentage with 2 decimals: 525 = 5.25%)
+    uint256 public baseAPY;
     
-    // Constants
-    uint256 public constant BASIS_POINTS = 10000;
-    uint256 public constant SECONDS_PER_DAY = 86400;
-    uint256 public constant DAYS_PER_YEAR = 365;
-
     // ============ Events ============
     
-    event YieldConfigured(uint256 indexed tokenId, uint256 baseAPY);
-    event YieldCalculated(uint256 indexed tokenId, uint256 principal, uint256 yield);
+    event YieldCalculated(uint256 indexed tokenId, uint256 yield, uint256 timestamp);
+    event BaseAPYUpdated(uint256 oldAPY, uint256 newAPY);
+
+    // ============ Errors ============
+    
+    error AssetNotFound();
+    error InvalidAPY();
+    error PriceNotAvailable();
+    error ZeroPrincipal();
+    error ZeroDuration();
 
     // ============ Constructor ============
     
-    constructor(address payable _pythOracle) Ownable(msg.sender) {
+    constructor(
+        address payable _pythOracle,
+        address _rwaFactory
+    ) Ownable(msg.sender) {
         pythOracle = PythOracleReader(_pythOracle);
+        rwaFactory = IRWATokenFactoryForYield(_rwaFactory);
+        baseAPY = 500; // Default 5.00% APY
     }
 
     // ============ Core Functions ============
     
     /**
-     * @notice Calculate yield for a token over a duration
+     * @notice Calculate yield for a token over a duration (simple interest)
      * @param tokenId The token ID
      * @param principalAmount Principal amount in USD cents
      * @param durationDays Duration in days
-     * @return uint256 Calculated yield amount
+     * @return uint256 Total amount (principal + interest)
      */
     function calculateYield(
         uint256 tokenId,
         uint256 principalAmount,
         uint256 durationDays
-    ) external view returns (uint256) {
-        // TODO: Get yield config for token
-        // TODO: Calculate simple interest: principal * rate * time
-        // TODO: Return yield amount
-        return 0;
+    ) external returns (uint256) {
+        if (principalAmount == 0) revert ZeroPrincipal();
+        if (durationDays == 0) revert ZeroDuration();
+        
+        // Verify asset exists
+        (address issuer, , , , , , , , bool verified) = rwaFactory.assets(tokenId);
+        if (issuer == address(0) || !verified) revert AssetNotFound();
+        
+        // Simple interest formula: interest = principal * rate * (days/365)
+        // Rate is baseAPY / 10000 (e.g., 525 = 5.25%)
+        uint256 interest = (principalAmount * baseAPY * durationDays) / (10000 * 365);
+        uint256 totalAmount = principalAmount + interest;
+        
+        emit YieldCalculated(tokenId, totalAmount, block.timestamp);
+        
+        return totalAmount;
     }
 
     /**
-     * @notice Preview current token value based on oracle price
+     * @notice Preview current value of ONE fraction based on oracle price changes
      * @param tokenId The token ID
-     * @return uint256 Current estimated value
+     * @return uint256 Current estimated value per fraction in USD cents
      */
     function previewTokenValue(uint256 tokenId) external view returns (uint256) {
-        // TODO: Get price at mint from PythOracleReader
-        // TODO: Get current price from oracle
-        // TODO: Calculate value change
-        // TODO: Return current value estimate
-        return 0;
-    }
-
-    /**
-     * @notice Calculate APY based on oracle interest rate benchmark
-     * @param tokenId The token ID
-     * @param benchmarkPriceId Pyth price feed for benchmark rate
-     * @return uint256 Calculated APY in basis points
-     */
-    function calculateAPY(
-        uint256 tokenId,
-        bytes32 benchmarkPriceId
-    ) external view returns (uint256) {
-        // TODO: Fetch benchmark rate from oracle
-        // TODO: Apply token-specific adjustments
-        // TODO: Return APY
-        return 0;
-    }
-
-    /**
-     * @notice Calculate compound yield (future enhancement)
-     * @param tokenId The token ID
-     * @param principalAmount Principal amount
-     * @param durationDays Duration in days
-     * @param compoundingPeriods Number of compounding periods per year
-     * @return uint256 Compound yield amount
-     */
-    function calculateCompoundYield(
-        uint256 tokenId,
-        uint256 principalAmount,
-        uint256 durationDays,
-        uint256 compoundingPeriods
-    ) external view returns (uint256) {
-        // TODO: Implement compound interest formula
-        // TODO: A = P(1 + r/n)^(nt)
-        return 0;
+        // Get asset metadata
+        (
+            address issuer,
+            ,
+            uint256 totalValue,
+            uint256 fractionCount,
+            ,
+            ,
+            uint256 oraclePriceAtMint,
+            bytes32 priceId,
+            bool verified
+        ) = rwaFactory.assets(tokenId);
+        
+        if (issuer == address(0) || !verified) revert AssetNotFound();
+        
+        // Get current oracle price
+        (int64 currentPrice, ) = pythOracle.getLatestPrice(priceId);
+        if (currentPrice <= 0) revert PriceNotAvailable();
+        
+        // Calculate value per fraction based on price appreciation/depreciation
+        // Formula: (currentPrice / priceAtMint) * (totalValue / fractionCount)
+        uint256 currentPriceUint = uint256(uint64(currentPrice));
+        uint256 valuePerFraction = (currentPriceUint * totalValue) / (oraclePriceAtMint * fractionCount);
+        
+        return valuePerFraction;
     }
 
     // ============ Admin Functions ============
     
     /**
-     * @notice Set yield configuration for a token
-     * @param tokenId The token ID
-     * @param baseAPY Base APY in basis points
+     * @notice Update the base APY rate
+     * @param newAPY New base APY (e.g., 525 = 5.25%)
      */
-    function setYieldConfig(uint256 tokenId, uint256 baseAPY) external onlyOwner {
-        require(baseAPY <= BASIS_POINTS * 100, "APY too high"); // Max 100% APY
+    function setBaseAPY(uint256 newAPY) external onlyOwner {
+        if (newAPY > 10000) revert InvalidAPY(); // Max 100%
         
-        tokenYieldConfig[tokenId] = YieldConfig({
-            baseAPY: baseAPY,
-            lastUpdateTime: block.timestamp,
-            isActive: true
-        });
-
-        emit YieldConfigured(tokenId, baseAPY);
-    }
-
-    /**
-     * @notice Update base APY for a token
-     * @param tokenId The token ID
-     * @param newAPY New APY in basis points
-     */
-    function updateAPY(uint256 tokenId, uint256 newAPY) external onlyOwner {
-        require(tokenYieldConfig[tokenId].isActive, "Token config not active");
-        tokenYieldConfig[tokenId].baseAPY = newAPY;
-        tokenYieldConfig[tokenId].lastUpdateTime = block.timestamp;
-    }
-
-    /**
-     * @notice Deactivate yield for a token
-     * @param tokenId The token ID
-     */
-    function deactivateYield(uint256 tokenId) external onlyOwner {
-        tokenYieldConfig[tokenId].isActive = false;
-    }
-
-    /**
-     * @notice Update PythOracleReader address
-     * @param newOracle New oracle address
-     */
-    function setPythOracle(address payable newOracle) external onlyOwner {
-        pythOracle = PythOracleReader(newOracle);
-    }
-
-    /**
-     * @notice Get yield configuration for a token
-     * @param tokenId The token ID
-     * @return YieldConfig struct
-     */
-    function getYieldConfig(uint256 tokenId) external view returns (YieldConfig memory) {
-        return tokenYieldConfig[tokenId];
+        uint256 oldAPY = baseAPY;
+        baseAPY = newAPY;
+        
+        emit BaseAPYUpdated(oldAPY, newAPY);
     }
 }
