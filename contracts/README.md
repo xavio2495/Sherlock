@@ -132,7 +132,7 @@ forge coverage
 
 After deployment, addresses will be saved to `deployments.txt`. Update your `.env` file with these addresses.
 
-**Pyth Contract**: `0xA2aa501b19aff244D90cc15a4Cf739D2725B5729`
+**Pyth Contract**: `0x98046Bd286715D3B0BC227Dd7a956b83D8978603`
 
 ## Development
 

@@ -21,6 +21,8 @@ const PYTH_ORACLE_READER_ABI = [
   'function getLatestPrice(bytes32 priceId) external view returns (int64 price, uint64 timestamp)',
   'function getPriceAtMint(uint256 tokenId) external view returns (int64)',
   'function getUpdateFee(bytes[] calldata updateData) external view returns (uint256)',
+  'function isSupportedFeed(bytes32 priceId) external view returns (bool)',
+  'function supportedFeeds(bytes32) external view returns (bool)',
 ];
 
 const FRACTION_MANAGER_ABI = [

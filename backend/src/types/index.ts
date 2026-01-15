@@ -75,6 +75,7 @@ export interface OracleUpdateRequest {
 export interface OracleUpdateResponse {
   success: boolean;
   txHash?: string;
+  txHashes?: string[];
   updatedFeeds?: string[];
   error?: string;
 }

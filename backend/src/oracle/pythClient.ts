@@ -1,4 +1,5 @@
-import { PriceServiceConnection } from '@pythnetwork/price-service-client';
+import { HermesClient } from '@pythnetwork/hermes-client';
+import { ethers } from 'ethers';
 import { config } from '../utils/config';
 import { contractService } from '../utils/contractInteraction';
 import { PriceData, OraclePriceResponse, OracleUpdateResponse, APIError } from '../types';
@@ -6,24 +7,35 @@ import Logger from '../utils/logger';
 
 const logger = new Logger('PythClient');
 
+// Pyth Contract ABI for direct calls
+const PYTH_ABI = [
+  'function getUpdateFee(bytes[] calldata updateData) external view returns (uint feeAmount)',
+  'function updatePriceFeeds(bytes[] calldata updateData) external payable',
+];
+
 /**
  * Pyth Oracle Integration Service
  * Fetches prices from Pyth Price Service API and submits to PythOracleReader contract
  */
 export class PythClient {
-  private connection: PriceServiceConnection;
+  private connection: HermesClient;
   private updateIntervalId?: NodeJS.Timeout;
+  private pythContract: ethers.Contract;
 
   constructor() {
-    this.connection = new PriceServiceConnection(config.pyth.apiUrl, {
-      logger: {
-        trace: (msg: string) => logger.debug(msg),
-        debug: (msg: string) => logger.debug(msg),
-        info: (msg: string) => logger.info(msg),
-        warn: (msg: string) => logger.warn(msg),
-        error: (msg: string) => logger.error(msg),
-      },
+    this.connection = new HermesClient(config.pyth.apiUrl, {
+      timeout: 10000,
     });
+
+    // Initialize direct connection to Pyth contract for fee queries
+    // Mantle Testnet Pyth Contract Address
+    const MANTLE_TESTNET_PYTH = '0x98046Bd286715D3B0BC227Dd7a956b83D8978603';
+    
+    this.pythContract = new ethers.Contract(
+      MANTLE_TESTNET_PYTH,
+      PYTH_ABI,
+      contractService.getProvider()
+    );
   }
 
   /**
@@ -33,23 +45,23 @@ export class PythClient {
     try {
       logger.info(`Fetching prices for ${priceIds.length} feeds`);
 
-      const priceFeeds = await this.connection.getLatestPriceFeeds(priceIds);
+      // HermesClient uses getLatestPriceUpdates to get actual price data
+      const priceUpdate = await this.connection.getLatestPriceUpdates(priceIds, {
+        parsed: true,
+      });
 
-      if (!priceFeeds || priceFeeds.length === 0) {
+      if (!priceUpdate || !priceUpdate.parsed || priceUpdate.parsed.length === 0) {
         throw new APIError(404, 'No price feeds found');
       }
 
-      const prices: PriceData[] = priceFeeds.map((feed: any) => {
-        const price = feed.getPriceNoOlderThan(60); // 60 seconds staleness tolerance
-        if (!price) {
-          throw new APIError(500, `Price data too old for feed ${feed.id}`);
-        }
-
+      const prices: PriceData[] = priceUpdate.parsed.map((feed: any) => {
+        const price = feed.price;
+        
         return {
           feedId: feed.id,
           price: parseFloat(price.price) * Math.pow(10, price.expo),
-          timestamp: price.publishTime,
-          confidence: parseFloat(price.conf),
+          timestamp: price.publish_time,
+          confidence: parseFloat(price.conf) * Math.pow(10, price.expo),
           expo: price.expo,
         };
       });
@@ -69,19 +81,24 @@ export class PythClient {
 
   /**
    * Get price update data for on-chain submission
-   * Converts base64 VAA data to hex format for ethers.js
+   * Gets binary VAA data in hex format for ethers.js
    */
   async getPriceUpdateData(priceIds: string[]): Promise<string[]> {
     try {
-      const priceUpdateData = await this.connection.getLatestVaas(priceIds);
-      
-      // Convert base64 to hex (0x-prefixed) for ethers.js
-      const hexUpdateData = priceUpdateData.map((base64Data) => {
-        const buffer = Buffer.from(base64Data, 'base64');
-        return '0x' + buffer.toString('hex');
+      // Request hex encoding directly from Hermes
+      const priceUpdate = await this.connection.getLatestPriceUpdates(priceIds, {
+        encoding: 'hex',
       });
       
-      return hexUpdateData;
+      // binary.data contains hex strings without 0x prefix - need to add it for ethers.js
+      if (!priceUpdate.binary || !priceUpdate.binary.data) {
+        throw new APIError(500, 'No price update data received');
+      }
+      
+      // Add 0x prefix if not already present
+      return priceUpdate.binary.data.map((hexString: string) => 
+        hexString.startsWith('0x') ? hexString : `0x${hexString}`
+      );
     } catch (error: any) {
       logger.error('Failed to get price update data', error);
       throw new APIError(500, 'Failed to get price update data');
@@ -90,40 +107,101 @@ export class PythClient {
 
   /**
    * Submit price updates to PythOracleReader contract
+   * Updates each price feed individually to avoid batching issues
    */
   async updatePricesOnChain(priceIds: string[]): Promise<OracleUpdateResponse> {
     try {
       logger.info(`Updating ${priceIds.length} price feeds on-chain`);
 
-      // Get price update data from Pyth API
-      const updateData = await this.getPriceUpdateData(priceIds);
+      const updatedFeeds: string[] = [];
+      const txHashes: string[] = [];
 
-      // Get update fee from contract
-      const updateFee = await contractService.contracts.pythOracleReader.getUpdateFee(updateData);
+      // Update each price feed individually
+      for (const priceId of priceIds) {
+        try {
+          logger.info(`Updating price feed: ${priceId}`);
 
-      logger.info(`Update fee: ${updateFee.toString()} wei`);
+          // Convert priceId to bytes32 format first
+          const priceIdBytes32 = priceId.startsWith('0x') ? priceId : `0x${priceId}`;
 
-      // Submit update to PythOracleReader contract
-      // Note: PythOracleReader will forward the call to the Pyth contract
-      const tx = await contractService.contracts.pythOracleReader.updatePrice(
-        priceIds[0], // Primary price feed
-        updateData,
-        { value: updateFee }
-      );
+          // Check if feed is supported before trying to update
+          const isSupported = await contractService.contracts.pythOracleReader.isSupportedFeed(priceIdBytes32);
+          if (!isSupported) {
+            logger.error(`Price feed ${priceId} is not supported in the contract`);
+            continue;
+          }
+          logger.info(`Price feed ${priceId} is supported`);
 
-      logger.info(`Price update transaction sent: ${tx.hash}`);
+          // Get price update data for this specific feed
+          const updateData = await this.getPriceUpdateData([priceId]);
 
-      const receipt = await tx.wait();
+          logger.info(`Received ${updateData.length} VAA updates for ${priceId}`);
 
-      logger.info(`Price update confirmed in block ${receipt.blockNumber}`);
+          // Get update fee from Pyth contract directly
+          const updateFee = await this.pythContract.getUpdateFee(updateData);
+
+          logger.info(`Update fee for ${priceId}: ${updateFee.toString()} wei (${ethers.formatEther(updateFee)} MNT)`);
+
+          // Try to estimate gas first to catch errors early
+          try {
+            const gasEstimate = await contractService.contracts.pythOracleReader.updatePrice.estimateGas(
+              priceIdBytes32,
+              updateData,
+              { value: updateFee }
+            );
+            logger.info(`Estimated gas for ${priceId}: ${gasEstimate.toString()}`);
+          } catch (estimateError: any) {
+            logger.error(`Gas estimation failed for ${priceId}:`, estimateError.message);
+            throw estimateError;
+          }
+
+          // Submit update to PythOracleReader contract
+          const tx = await contractService.contracts.pythOracleReader.updatePrice(
+            priceIdBytes32,
+            updateData,
+            { 
+              value: updateFee
+            }
+          );
+
+          logger.info(`Price update transaction sent for ${priceId}: ${tx.hash}`);
+
+          const receipt = await tx.wait();
+
+          logger.info(`Price update confirmed for ${priceId} in block ${receipt.blockNumber}`);
+
+          updatedFeeds.push(priceId);
+          txHashes.push(receipt.hash);
+
+        } catch (error: any) {
+          logger.error(`Failed to update price feed ${priceId}:`, error.message);
+          // Continue with other feeds even if one fails
+        }
+      }
+
+      if (updatedFeeds.length === 0) {
+        throw new Error('All price updates failed');
+      }
+
+      logger.info(`Successfully updated ${updatedFeeds.length}/${priceIds.length} price feeds`);
 
       return {
         success: true,
-        txHash: receipt.hash,
-        updatedFeeds: priceIds,
+        txHash: txHashes[0], // Return first tx hash for backwards compatibility
+        txHashes, // Return all tx hashes
+        updatedFeeds,
       };
     } catch (error: any) {
       logger.error('Failed to update prices on-chain', error);
+      
+      // More detailed error logging
+      if (error.data) {
+        logger.error('Error data:', error.data);
+      }
+      if (error.transaction) {
+        logger.error('Failed transaction:', error.transaction);
+      }
+      
       return {
         success: false,
         error: error.message || 'Failed to update prices on-chain',
