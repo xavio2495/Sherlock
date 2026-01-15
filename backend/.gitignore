@@ -12,6 +12,11 @@ yarn.lock
 dist/
 build/
 
+# Logs
+logs/
+*.log
+error-log.txt
+
 # ZK Circuit artifacts
 circuits/**/*.r1cs
 circuits/**/*.wasm

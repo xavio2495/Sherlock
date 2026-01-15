@@ -1,12 +1,39 @@
 import { HermesClient } from '@pythnetwork/hermes-client';
 import { ethers } from 'ethers';
 import * as cron from 'node-cron';
+import * as fs from 'fs';
+import * as path from 'path';
 import { config } from '../utils/config';
 import { contractService } from '../utils/contractInteraction';
 import { PriceData, OraclePriceResponse, OracleUpdateResponse, APIError } from '../types';
 import Logger from '../utils/logger';
 
 const logger = new Logger('PythClient');
+
+// Error log file path
+const ERROR_LOG_PATH = path.join(__dirname, '../../logs/error-log.txt');
+
+/**
+ * Log error to file with timestamp
+ */
+function logErrorToFile(error: string): void {
+  try {
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${error}\n`;
+    
+    // Ensure logs directory exists
+    const logsDir = path.dirname(ERROR_LOG_PATH);
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+    
+    // Append to error log file
+    fs.appendFileSync(ERROR_LOG_PATH, logEntry, 'utf8');
+  } catch (fileError) {
+    // If file logging fails, only log to console
+    logger.error(`Failed to write to error log: ${fileError}`);
+  }
+}
 
 // Pyth Contract ABI for direct calls
 const PYTH_ABI = [
@@ -80,7 +107,9 @@ export class PythClient {
         prices,
       };
     } catch (error: any) {
-      logger.error('Failed to fetch prices from Pyth', error);
+      const errorMsg = `Failed to fetch prices from Pyth: ${error.message}`;
+      logger.error(errorMsg, error);
+      logErrorToFile(errorMsg);
       return {
         success: false,
         error: error.message || 'Failed to fetch prices',
@@ -109,7 +138,9 @@ export class PythClient {
         hexString.startsWith('0x') ? hexString : `0x${hexString}`
       );
     } catch (error: any) {
-      logger.error('Failed to get price update data', error);
+      const errorMsg = `Failed to get price update data: ${error.message}`;
+      logger.error(errorMsg, error);
+      logErrorToFile(errorMsg);
       throw new APIError(500, 'Failed to get price update data');
     }
   }
@@ -222,7 +253,9 @@ export class PythClient {
           txHashes.push(receipt.hash);
 
         } catch (error: any) {
-          logger.error(`Failed to update price feed ${priceId}:`, error.message);
+          const errorMsg = `Failed to update price feed ${priceId}: ${error.message}`;
+          logger.error(errorMsg);
+          logErrorToFile(errorMsg);
           // Continue with other feeds even if one fails
         }
       }
@@ -240,14 +273,18 @@ export class PythClient {
         updatedFeeds,
       };
     } catch (error: any) {
-      logger.error('Failed to update prices on-chain', error);
+      const errorMsg = `Failed to update prices on-chain: ${error.message}`;
+      logger.error(errorMsg, error);
+      logErrorToFile(errorMsg);
       
       // More detailed error logging
       if (error.data) {
         logger.error('Error data:', error.data);
+        logErrorToFile(`Error data: ${JSON.stringify(error.data)}`);
       }
       if (error.transaction) {
         logger.error('Failed transaction:', error.transaction);
+        logErrorToFile(`Failed transaction: ${JSON.stringify(error.transaction)}`);
       }
       
       return {
@@ -327,7 +364,9 @@ export class PythClient {
       } catch (error: any) {
         this.metrics.failedUpdates++;
         this.metrics.lastUpdateStatus = 'error';
-        logger.error('✗ Scheduled price update failed after all retries', error);
+        const errorMsg = `Scheduled price update failed after all retries: ${error.message}`;
+        logger.error('✗ ' + errorMsg, error);
+        logErrorToFile(errorMsg);
         this.logMetrics();
       } finally {
         logger.info('='.repeat(60));
@@ -359,7 +398,9 @@ export class PythClient {
         .catch((error) => {
           this.metrics.failedUpdates++;
           this.metrics.lastUpdateStatus = 'error';
-          logger.error('✗ Initial price update failed', error);
+          const errorMsg = `Initial price update failed: ${error.message}`;
+          logger.error('✗ ' + errorMsg, error);
+          logErrorToFile(errorMsg);
           this.logMetrics();
         });
     }, 5000);
