@@ -183,6 +183,47 @@ router.post('/api/rwa/purchase', generalLimiter, validateRequest(purchaseSchema)
   }
 });
 
+/**
+ * GET /api/rwa/:tokenId
+ * Get asset metadata for a specific RWA token
+ * 
+ * Rate limited: 30 requests per minute per IP
+ */
+router.get('/api/rwa/:tokenId', generalLimiter, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const tokenId = parseInt(req.params.tokenId, 10);
+    
+    if (isNaN(tokenId) || tokenId < 0) {
+      res.status(400).json({
+        success: false,
+        error: 'Invalid token ID. Must be a non-negative integer.',
+      });
+      return;
+    }
+
+    logger.info(`Received request for token metadata: tokenId=${tokenId}`);
+
+    const result = await rwaService.getAssetMetadata(tokenId);
+
+    res.status(200).json(result);
+  } catch (error: any) {
+    logger.error(`Failed to fetch token metadata for tokenId=${req.params.tokenId}`, error);
+    
+    if (error instanceof APIError) {
+      res.status(error.statusCode).json({
+        success: false,
+        error: error.message,
+        details: error.details,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Internal server error',
+      });
+    }
+  }
+});
+
 // ============ ZK Proof Endpoints ============
 
 /**

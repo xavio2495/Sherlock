@@ -8,6 +8,7 @@ const RWA_FACTORY_ABI = [
   'function mintRWAToken(string memory documentHash, uint256 totalValue, uint256 fractionCount, uint256 minFractionSize, bytes32 priceId, bytes[] calldata priceUpdateData, uint256 lockupWeeks) external payable returns (uint256)',
   'function purchaseFraction(uint256 tokenId, uint256 amount, bytes32 secret, bytes32 nullifier) external payable',
   'function getAssetMetadata(uint256 tokenId) external view returns (tuple(address issuer, string documentHash, uint256 totalValue, uint256 fractionCount, uint256 minFractionSize, uint256 mintTimestamp, uint256 oraclePriceAtMint, bytes32 priceId, bool verified))',
+  'function balanceOf(address account, uint256 id) external view returns (uint256)',
 ];
 
 const ZK_VERIFIER_ABI = [
@@ -28,6 +29,7 @@ const PYTH_ORACLE_READER_ABI = [
 const FRACTION_MANAGER_ABI = [
   'function isTransferAllowed(uint256 tokenId, uint256 amount) external view returns (bool)',
   'function recombineFractions(uint256 tokenId, uint256 amount) external',
+  'function fractionSpecs(uint256 tokenId) external view returns (uint256 totalSupply, uint256 minUnitSize, uint256 lockupPeriod, uint256 lockupEnd, bool isActive)',
 ];
 
 const YIELD_CALCULATOR_ABI = [

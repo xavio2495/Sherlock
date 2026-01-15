@@ -230,6 +230,79 @@ export class RWAService {
   }
 
   /**
+   * Get asset metadata for a specific token ID
+   */
+  async getAssetMetadata(tokenId: number): Promise<any> {
+    try {
+      logger.info(`Fetching asset metadata for token ${tokenId}`);
+
+      // Fetch asset metadata from contract
+      const metadata = await contractService.contracts.rwaFactory.getAssetMetadata(tokenId);
+
+      // Check if token exists
+      if (!metadata || !metadata.issuer || metadata.issuer === ethers.ZeroAddress) {
+        throw new APIError(404, `Token ID ${tokenId} does not exist`);
+      }
+
+      // Get fraction spec from FractionManager (it's a public mapping, so we call fractionSpecs directly)
+      const fractionSpec = await contractService.contracts.fractionManager.fractionSpecs(tokenId);
+
+      // Get issuer balance
+      const issuerBalance = await contractService.contracts.rwaFactory.balanceOf(metadata.issuer, tokenId);
+
+      // Get oracle price at mint
+      const oraclePriceAtMint = await contractService.contracts.pythOracleReader.getPriceAtMint(tokenId);
+
+      // Calculate economics
+      const pricePerFraction = Number(metadata.totalValue) / Number(metadata.fractionCount);
+      const availableFractions = Number(issuerBalance);
+      const soldFractions = Number(metadata.fractionCount) - availableFractions;
+      const availableValue = availableFractions * pricePerFraction;
+
+      return {
+        success: true,
+        tokenId,
+        metadata: {
+          issuer: metadata.issuer,
+          documentHash: metadata.documentHash,
+          totalValue: Number(metadata.totalValue),
+          fractionCount: Number(metadata.fractionCount),
+          minFractionSize: Number(metadata.minFractionSize),
+          mintTimestamp: Number(metadata.mintTimestamp),
+          oraclePriceAtMint: Number(oraclePriceAtMint),
+          verified: metadata.verified,
+        },
+        fractionSpec: {
+          totalSupply: Number(fractionSpec.totalSupply),
+          minUnitSize: Number(fractionSpec.minUnitSize),
+          lockupPeriod: Number(fractionSpec.lockupPeriod),
+          lockupEnd: Number(fractionSpec.lockupEnd),
+          isActive: fractionSpec.isActive,
+        },
+        economics: {
+          pricePerFraction: pricePerFraction.toFixed(2),
+          availableFractions,
+          soldFractions,
+          availableValue: availableValue.toFixed(2),
+          soldValue: (soldFractions * pricePerFraction).toFixed(2),
+        },
+      };
+    } catch (error: any) {
+      logger.error(`Failed to fetch asset metadata for token ${tokenId}`, error);
+
+      if (error instanceof APIError) {
+        throw error;
+      }
+
+      if (error.code === 'CALL_EXCEPTION') {
+        throw new APIError(404, `Token ID ${tokenId} does not exist or contract call failed`);
+      }
+
+      throw new APIError(500, error.message || 'Failed to fetch asset metadata');
+    }
+  }
+
+  /**
    * Validate RWA creation request
    */
   private validateCreateRequest(request: RWACreateRequest): void {
