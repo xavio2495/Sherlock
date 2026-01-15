@@ -22,6 +22,7 @@ export class PythClient {
   private connection: HermesClient;
   private cronTask?: cron.ScheduledTask;
   private pythContract: ethers.Contract;
+  private isUpdating: boolean = false; // Mutex lock
   private metrics = {
     totalUpdates: 0,
     successfulUpdates: 0,
@@ -149,6 +150,14 @@ export class PythClient {
    * Updates each price feed individually to avoid batching issues
    */
   async updatePricesOnChain(priceIds: string[]): Promise<OracleUpdateResponse> {
+    // Mutex lock to prevent concurrent updates
+    if (this.isUpdating) {
+      logger.warn('Price update already in progress, skipping...');
+      throw new APIError(503, 'Price update already in progress');
+    }
+
+    this.isUpdating = true;
+
     try {
       logger.info(`Updating ${priceIds.length} price feeds on-chain`);
 
@@ -245,6 +254,9 @@ export class PythClient {
         success: false,
         error: error.message || 'Failed to update prices on-chain',
       };
+    } finally {
+      // Release mutex lock
+      this.isUpdating = false;
     }
   }
 

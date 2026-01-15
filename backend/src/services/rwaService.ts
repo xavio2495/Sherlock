@@ -32,7 +32,8 @@ export class RWAService {
         userAddress: request.issuerAddress,
         inputs: {
           commitment: request.zkProofInput.commitment,
-          secret: request.zkProofInput.nullifier, // Using nullifier as secret for MVP
+          secret: request.zkProofInput.secret,
+          nullifier: request.zkProofInput.nullifier,
         },
       });
 
@@ -162,8 +163,14 @@ export class RWAService {
    * Validate RWA creation request
    */
   private validateCreateRequest(request: RWACreateRequest): void {
-    if (!ethers.isAddress(request.issuerAddress)) {
-      throw new APIError(400, 'Invalid issuer address');
+    try {
+      // Normalize to lowercase then validate and checksum
+      // This accepts addresses regardless of their checksum format
+      const normalized = request.issuerAddress.toLowerCase();
+      ethers.getAddress(normalized);
+    } catch (error: any) {
+      logger.error(`Address validation failed for ${request.issuerAddress}:`, error.message);
+      throw new APIError(400, `Invalid issuer address: ${error.message}`);
     }
 
     if (!request.documentHash || request.documentHash.length === 0) {

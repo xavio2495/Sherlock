@@ -12,6 +12,7 @@ export interface RWACreateRequest {
   assetType: 'invoice' | 'bond' | 'real-estate';
   zkProofInput: {
     commitment: string;
+    secret: string;
     nullifier: string;
   };
 }
