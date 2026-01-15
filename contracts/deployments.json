@@ -1,0 +1,17 @@
+{
+  "network": "mantle-testnet",
+  "chainId": 5003,
+  "deploymentDate": "1768475051",
+  "deployer": "0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38",
+  "pythContract": "0x98046Bd286715D3B0BC227Dd7a956b83D8978603",
+  "contracts": {
+    "ZKVerifier": "0xE504B6FB1BE655164a5EF14CCa5822ED7d3305ef",
+    "PythOracleReader": "0xD78e55b27D452c07a0D19A500F3d67E2B5754478",
+    "FractionManager": "0xE339a4Ac767011d767C17e8b2718EEb87687257B",
+    "RWATokenFactory": "0xeA157DE7D1ec58a0610D82171bbb4873bc19319B",
+    "YieldCalculator": "0x16D6d4335A01f75c252f86607a076700427Fea00",
+    "EligibilityVerifier": "0x402FF5AA2735Dca465D9784AD7f3A43CCfa7deC2",
+    "RangeProofVerifier": "0xCa3b3D111725E1b006FFB8924a88eBB171d6CCfD",
+    "ZKVerifierV2": "0x7BEBCFC47be110a0175452456267bFdaD45DdE8B"
+  }
+}

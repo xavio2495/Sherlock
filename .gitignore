@@ -1,0 +1,8 @@
+lib
+contracts/cache
+out
+prompts
+AGENTS.md
+.github
+contracts/.env
+contracts/broadcast
