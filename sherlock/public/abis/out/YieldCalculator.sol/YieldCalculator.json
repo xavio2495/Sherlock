@@ -1,0 +1,394 @@
+{
+  "abi": [
+    {
+      "type": "constructor",
+      "inputs": [
+        { "name": "_pythOracle", "type": "address", "internalType": "address payable" },
+        { "name": "_rwaFactory", "type": "address", "internalType": "address" }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "baseAPY",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "calculateYield",
+      "inputs": [
+        { "name": "tokenId", "type": "uint256", "internalType": "uint256" },
+        { "name": "principalAmount", "type": "uint256", "internalType": "uint256" },
+        { "name": "durationDays", "type": "uint256", "internalType": "uint256" }
+      ],
+      "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "previewTokenValue",
+      "inputs": [{ "name": "tokenId", "type": "uint256", "internalType": "uint256" }],
+      "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "pythOracle",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "address", "internalType": "contract PythOracleReader" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "renounceOwnership",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "rwaFactory",
+      "inputs": [],
+      "outputs": [
+        { "name": "", "type": "address", "internalType": "contract IRWATokenFactoryForYield" }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "setBaseAPY",
+      "inputs": [{ "name": "newAPY", "type": "uint256", "internalType": "uint256" }],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [{ "name": "newOwner", "type": "address", "internalType": "address" }],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "event",
+      "name": "BaseAPYUpdated",
+      "inputs": [
+        { "name": "oldAPY", "type": "uint256", "indexed": false, "internalType": "uint256" },
+        { "name": "newAPY", "type": "uint256", "indexed": false, "internalType": "uint256" }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        { "name": "previousOwner", "type": "address", "indexed": true, "internalType": "address" },
+        { "name": "newOwner", "type": "address", "indexed": true, "internalType": "address" }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "YieldCalculated",
+      "inputs": [
+        { "name": "tokenId", "type": "uint256", "indexed": true, "internalType": "uint256" },
+        { "name": "yield", "type": "uint256", "indexed": false, "internalType": "uint256" },
+        { "name": "timestamp", "type": "uint256", "indexed": false, "internalType": "uint256" }
+      ],
+      "anonymous": false
+    },
+    { "type": "error", "name": "AssetNotFound", "inputs": [] },
+    { "type": "error", "name": "InvalidAPY", "inputs": [] },
+    {
+      "type": "error",
+      "name": "OwnableInvalidOwner",
+      "inputs": [{ "name": "owner", "type": "address", "internalType": "address" }]
+    },
+    {
+      "type": "error",
+      "name": "OwnableUnauthorizedAccount",
+      "inputs": [{ "name": "account", "type": "address", "internalType": "address" }]
+    },
+    { "type": "error", "name": "PriceNotAvailable", "inputs": [] },
+    { "type": "error", "name": "ZeroDuration", "inputs": [] },
+    { "type": "error", "name": "ZeroPrincipal", "inputs": [] }
+  ],
+  "bytecode": {
+    "object": "0x6080346100e157601f6107df38819003918201601f19168301916001600160401b038311848410176100e55780849260409485528339810103126100e15780516001600160a01b0391828216918290036100e15760200151908282168092036100e15733156100c9575f549060018060a01b03199133838216175f55604051943391167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e05f80a381600154161760015560025416176002556101f46003556106e590816100fa8239f35b604051631e4fbdf760e01b81525f6004820152602490fd5b5f80fd5b634e487b7160e01b5f52604160045260245ffdfe6080604090808252600480361015610015575f80fd5b5f3560e01c918263214405a914610541575081632319b256146103f7578163588078a11461024e5781635ee6efd0146101e3578163715018a61461018c5781638da5cb5b14610165578163bb74ba4b1461013d578163f2fde38b146100ae575063f5d6ac9014610083575f80fd5b346100aa575f3660031901126100aa5760015490516001600160a01b039091168152602090f35b5f80fd5b82346100aa5760203660031901126100aa576001600160a01b038235818116939192908490036100aa576100e0610684565b83156101275750505f54826bffffffffffffffffffffffff60a01b8216175f55167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e05f80a3005b905f6024925191631e4fbdf760e01b8352820152fd5b82346100aa575f3660031901126100aa5760025490516001600160a01b039091168152602090f35b82346100aa575f3660031901126100aa575f5490516001600160a01b039091168152602090f35b346100aa575f3660031901126100aa576101a4610684565b5f80546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b82346100aa5760203660031901126100aa5781356101ff610684565b6127108111610240577f92846c67351932b78c86ef4a06fd61781497e7fcb97e3b1200ecfcbd7a30d6109250600354908060035582519182526020820152a1005b5051631b0848d160e21b8152fd5b82346100aa5760203660031901126100aa576002548151630cf35bdd60e41b815283358482015291906001600160a01b03905f908490602490829085165afa9081156103ed575f935f915f935f965f935f926103b2575b508216159081156103a9575b506103995784906001541691602482518094819363b2ee2f0160e01b83528b8301525afa90811561038f575f91610342575b505f8160070b13156103325761030d929167ffffffffffffffff610307921661065d565b9361065d565b90811561031f57602093505191048152f35b601284634e487b7160e01b5f525260245ffd5b835163579a480160e01b81528690fd5b90508381813d8311610388575b610359818361055b565b810103126100aa578051908160070b82036100aa576020015167ffffffffffffffff8116036100aa57866102e3565b503d61034f565b84513d5f823e3d90fd5b845163470cbf4760e01b81528790fd5b905015886102b1565b9350505094508492506103d791503d805f833e6103cf818361055b565b810190610591565b919a9498959790965093949093925090506102a5565b82513d5f823e3d90fd5b82346100aa5760603660031901126100aa576024359082356044358315610531578015610521576002548351630cf35bdd60e41b8152868101849052906001600160a01b03905f908390602490829085165afa918215610517575f905f936104f0575b5016159081156104e7575b506104d7576104836237b1d09161047e6003548761065d565b61065d565b0483018093116104c457602093507f699e6d40fdfd2a9b389b4829c32556c6ffbb29a37b8c0b628b77012e2d2d2c458280518581524287820152a251908152f35b601184634e487b7160e01b5f525260245ffd5b825163470cbf4760e01b81528590fd5b90501586610465565b90506105079192503d805f833e6103cf818361055b565b989796505050505050508861045a565b85513d5f823e3d90fd5b825163346ab43760e11b81528590fd5b8251630b3eb09f60e21b81528590fd5b346100aa575f3660031901126100aa576020906003548152f35b90601f8019910116810190811067ffffffffffffffff82111761057d57604052565b634e487b7160e01b5f52604160045260245ffd5b9091610120828403126100aa5781516001600160a01b03811681036100aa579260208084015167ffffffffffffffff908181116100aa57850183601f820112156100aa57805191821161057d57604051936105f5601f8401601f191685018661055b565b8285528383830101116100aa575f5b82811061064a575050905f91830101529160408101519160608201519160808101519160a08201519160c08101519161010060e083015192015180151581036100aa5790565b8181018401518582018501528301610604565b8181029291811591840414171561067057565b634e487b7160e01b5f52601160045260245ffd5b5f546001600160a01b0316330361069757565b60405163118cdaa760e01b8152336004820152602490fdfea26469706673582212209a16f01440cf2ee15266b5505bcc2c6f8ba25256c7273164a220d6696b18b48564736f6c63430008180033",
+    "sourceMap": "980:3863:79:-:0;;;;;;;;;;;;;-1:-1:-1;;980:3863:79;;;;-1:-1:-1;;;;;980:3863:79;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;980:3863:79;;;;;;;;;;;;;;;;;;;;;;1796:10;1273:26:0;1269:95;;-1:-1:-1;980:3863:79;;;;;;;;1796:10;;980:3863;;;;-1:-1:-1;980:3863:79;;;1796:10;;980:3863;;3052:40:0;-1:-1:-1;3052:40:0;;980:3863:79;1818:42;980:3863;;;1818:42;980:3863;1870:50;980:3863;;;1870:50;980:3863;1940:3;1930:13;980:3863;;;;;;;;1269:95:0;980:3863:79;;-1:-1:-1;;;1322:31:0;;-1:-1:-1;1322:31:0;;;980:3863:79;;;1322:31:0;980:3863:79;-1:-1:-1;980:3863:79;;;;;;-1:-1:-1;980:3863:79;;;;;-1:-1:-1;980:3863:79",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x6080604090808252600480361015610015575f80fd5b5f3560e01c918263214405a914610541575081632319b256146103f7578163588078a11461024e5781635ee6efd0146101e3578163715018a61461018c5781638da5cb5b14610165578163bb74ba4b1461013d578163f2fde38b146100ae575063f5d6ac9014610083575f80fd5b346100aa575f3660031901126100aa5760015490516001600160a01b039091168152602090f35b5f80fd5b82346100aa5760203660031901126100aa576001600160a01b038235818116939192908490036100aa576100e0610684565b83156101275750505f54826bffffffffffffffffffffffff60a01b8216175f55167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e05f80a3005b905f6024925191631e4fbdf760e01b8352820152fd5b82346100aa575f3660031901126100aa5760025490516001600160a01b039091168152602090f35b82346100aa575f3660031901126100aa575f5490516001600160a01b039091168152602090f35b346100aa575f3660031901126100aa576101a4610684565b5f80546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b82346100aa5760203660031901126100aa5781356101ff610684565b6127108111610240577f92846c67351932b78c86ef4a06fd61781497e7fcb97e3b1200ecfcbd7a30d6109250600354908060035582519182526020820152a1005b5051631b0848d160e21b8152fd5b82346100aa5760203660031901126100aa576002548151630cf35bdd60e41b815283358482015291906001600160a01b03905f908490602490829085165afa9081156103ed575f935f915f935f965f935f926103b2575b508216159081156103a9575b506103995784906001541691602482518094819363b2ee2f0160e01b83528b8301525afa90811561038f575f91610342575b505f8160070b13156103325761030d929167ffffffffffffffff610307921661065d565b9361065d565b90811561031f57602093505191048152f35b601284634e487b7160e01b5f525260245ffd5b835163579a480160e01b81528690fd5b90508381813d8311610388575b610359818361055b565b810103126100aa578051908160070b82036100aa576020015167ffffffffffffffff8116036100aa57866102e3565b503d61034f565b84513d5f823e3d90fd5b845163470cbf4760e01b81528790fd5b905015886102b1565b9350505094508492506103d791503d805f833e6103cf818361055b565b810190610591565b919a9498959790965093949093925090506102a5565b82513d5f823e3d90fd5b82346100aa5760603660031901126100aa576024359082356044358315610531578015610521576002548351630cf35bdd60e41b8152868101849052906001600160a01b03905f908390602490829085165afa918215610517575f905f936104f0575b5016159081156104e7575b506104d7576104836237b1d09161047e6003548761065d565b61065d565b0483018093116104c457602093507f699e6d40fdfd2a9b389b4829c32556c6ffbb29a37b8c0b628b77012e2d2d2c458280518581524287820152a251908152f35b601184634e487b7160e01b5f525260245ffd5b825163470cbf4760e01b81528590fd5b90501586610465565b90506105079192503d805f833e6103cf818361055b565b989796505050505050508861045a565b85513d5f823e3d90fd5b825163346ab43760e11b81528590fd5b8251630b3eb09f60e21b81528590fd5b346100aa575f3660031901126100aa576020906003548152f35b90601f8019910116810190811067ffffffffffffffff82111761057d57604052565b634e487b7160e01b5f52604160045260245ffd5b9091610120828403126100aa5781516001600160a01b03811681036100aa579260208084015167ffffffffffffffff908181116100aa57850183601f820112156100aa57805191821161057d57604051936105f5601f8401601f191685018661055b565b8285528383830101116100aa575f5b82811061064a575050905f91830101529160408101519160608201519160808101519160a08201519160c08101519161010060e083015192015180151581036100aa5790565b8181018401518582018501528301610604565b8181029291811591840414171561067057565b634e487b7160e01b5f52601160045260245ffd5b5f546001600160a01b0316330361069757565b60405163118cdaa760e01b8152336004820152602490fdfea26469706673582212209a16f01440cf2ee15266b5505bcc2c6f8ba25256c7273164a220d6696b18b48564736f6c63430008180033",
+    "sourceMap": "980:3863:79:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;980:3863:79;;;;;;;;-1:-1:-1;;;;;980:3863:79;;;;;;;;;;;;;;;;;;;-1:-1:-1;;980:3863:79;;;;-1:-1:-1;;;;;980:3863:79;;;;;;;;;;;;;;1500:62:0;;:::i;:::-;2627:22;;2623:91;;980:3863:79;;;;;;;;;;;;;;3052:40:0;980:3863:79;3052:40:0;;980:3863:79;2623:91:0;980:3863:79;;;;;2672:31:0;;;;;;;;980:3863:79;2672:31:0;980:3863:79;;;;;;;-1:-1:-1;;980:3863:79;;;;1116:42;980:3863;;;-1:-1:-1;;;;;980:3863:79;;;;;;;;;;;;;;;-1:-1:-1;;980:3863:79;;;;;;;;-1:-1:-1;;;;;980:3863:79;;;;;;;;;;;;;;-1:-1:-1;;980:3863:79;;;;1500:62:0;;:::i;:::-;980:3863:79;;;-1:-1:-1;;;;;;980:3863:79;;;;-1:-1:-1;;;;;980:3863:79;3052:40:0;980:3863:79;;3052:40:0;980:3863:79;;;;;;;;-1:-1:-1;;980:3863:79;;;;;;1500:62:0;;:::i;:::-;4673:5:79;4664:14;;4660:39;;4804:30;980:3863;;4747:7;980:3863;;;4747:7;980:3863;;;;;;;;;;4804:30;980:3863;4660:39;-1:-1:-1;980:3863:79;-1:-1:-1;;;4687:12:79;;;980:3863;;;;;;;-1:-1:-1;;980:3863:79;;;;3755:10;980:3863;;;-1:-1:-1;;;3755:26:79;;980:3863;;3755:26;;;980:3863;;;-1:-1:-1;;;;;980:3863:79;;;;;;;;;;;3755:26;;;;;;;980:3863;;;;;;;;;;;3755:26;;;980:3863;;;;3804:20;:33;;;;;980:3863;3800:61;;;980:3863;;;;;;;;;;;;;;;;3941:34;;;;;980:3863;3941:34;;;;;;;980:3863;3941:34;;;980:3863;;;;;;3989:17;;3985:49;;4342:33;980:3863;;;4308:29;980:3863;;4308:29;:::i;:::-;4342:33;;:::i;:::-;980:3863;;;;;;;;;;;;;;;;;;;;;;;;;;3985:49;980:3863;;-1:-1:-1;;;4015:19:79;;980:3863;;4015:19;3941:34;;;;;;;;;;;;;;;;:::i;:::-;;;980:3863;;;;;;;;;;;;;;;;;;;;;;;3941:34;;;;;;;;;980:3863;;;;;;;;;3800:61;980:3863;;-1:-1:-1;;;3846:15:79;;980:3863;;3846:15;3804:33;3828:9;;;3804:33;;;3755:26;;;;;;;;;;;;;;;980:3863;3755:26;;;;;;:::i;:::-;;;;;:::i;:::-;;;;;;;;;-1:-1:-1;3755:26:79;;;;;-1:-1:-1;3755:26:79;-1:-1:-1;3755:26:79;;;980:3863;;;;;;;;;;;;;;;;-1:-1:-1;;980:3863:79;;;;;;;;;;;2480:20;;2476:48;;2538:17;;2534:44;;2676:10;980:3863;;;-1:-1:-1;;;2676:26:79;;;;;980:3863;;;;-1:-1:-1;;;;;980:3863:79;;;;;;;;;;;2676:26;;;;;;;980:3863;;;2676:26;;;980:3863;;;2716:20;:33;;;;;980:3863;2712:61;;;2944:40;2989:11;980:3863;2944:25;2962:7;980:3863;2944:25;;:::i;:::-;:40;:::i;:::-;980:3863;;;;;;;;;;;3083:54;980:3863;;;;;;3121:15;980:3863;;;;3083:54;980:3863;;;;;;;;;;;;;;;;;2712:61;980:3863;;-1:-1:-1;;;2758:15:79;;980:3863;;2758:15;2716:33;2740:9;;;2716:33;;;2676:26;;;;;;;;;980:3863;2676:26;;;;;;:::i;:::-;;;;;;;;;;;;;;;980:3863;;;;;;;;;2534:44;980:3863;;-1:-1:-1;;;2564:14:79;;980:3863;;2564:14;2476:48;980:3863;;-1:-1:-1;;;2509:15:79;;980:3863;;2509:15;980:3863;;;;;;-1:-1:-1;;980:3863:79;;;;;;1250:22;980:3863;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;980:3863:79;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;980:3863:79;;;;;:::i;:::-;;;;;;;;;;;;-1:-1:-1;980:3863:79;;;;;;;;;-1:-1:-1;980:3863:79;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;1796:162:0;1710:6;980:3863:79;-1:-1:-1;;;;;980:3863:79;735:10:9;1855:23:0;1851:101;;1796:162::o;1851:101::-;980:3863:79;;-1:-1:-1;;;1901:40:0;;735:10:9;1901:40:0;;;980:3863:79;;;1901:40:0",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "baseAPY()": "214405a9",
+    "calculateYield(uint256,uint256,uint256)": "2319b256",
+    "owner()": "8da5cb5b",
+    "previewTokenValue(uint256)": "588078a1",
+    "pythOracle()": "f5d6ac90",
+    "renounceOwnership()": "715018a6",
+    "rwaFactory()": "bb74ba4b",
+    "setBaseAPY(uint256)": "5ee6efd0",
+    "transferOwnership(address)": "f2fde38b"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"_pythOracle\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_rwaFactory\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"AssetNotFound\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidAPY\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PriceNotAvailable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ZeroDuration\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ZeroPrincipal\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"oldAPY\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newAPY\",\"type\":\"uint256\"}],\"name\":\"BaseAPYUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"yield\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"YieldCalculated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"baseAPY\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"principalAmount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"durationDays\",\"type\":\"uint256\"}],\"name\":\"calculateYield\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"previewTokenValue\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pythOracle\",\"outputs\":[{\"internalType\":\"contract PythOracleReader\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rwaFactory\",\"outputs\":[{\"internalType\":\"contract IRWATokenFactoryForYield\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newAPY\",\"type\":\"uint256\"}],\"name\":\"setBaseAPY\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Optional for MVP - provides APY calculations and token value previews\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"calculateYield(uint256,uint256,uint256)\":{\"params\":{\"durationDays\":\"Duration in days\",\"principalAmount\":\"Principal amount in USD cents\",\"tokenId\":\"The token ID\"},\"returns\":{\"_0\":\"uint256 Total amount (principal + interest)\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"previewTokenValue(uint256)\":{\"params\":{\"tokenId\":\"The token ID\"},\"returns\":{\"_0\":\"uint256 Current estimated value per fraction in USD cents\"}},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"setBaseAPY(uint256)\":{\"params\":{\"newAPY\":\"New base APY (e.g., 525 = 5.25%)\"}},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"YieldCalculator\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"calculateYield(uint256,uint256,uint256)\":{\"notice\":\"Calculate yield for a token over a duration (simple interest)\"},\"previewTokenValue(uint256)\":{\"notice\":\"Preview current value of ONE fraction based on oracle price changes\"},\"setBaseAPY(uint256)\":{\"notice\":\"Update the base APY rate\"}},\"notice\":\"Compute yield/return based on oracle data\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/YieldCalculator.sol\":\"YieldCalculator\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/\",\":@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/\",\":erc4626-tests/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/erc4626-tests/\",\":forge-std/=../lib/openzeppelin-contracts/lib/forge-std/src/\",\":halmos-cheatcodes/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/\",\":openzeppelin-contracts/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/contracts/\",\":pyth-sdk-solidity/=lib/pyth-sdk-solidity/\"],\"viaIR\":true},\"sources\":{\"../lib/openzeppelin-contracts/contracts/access/Ownable.sol\":{\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6\",\"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a\"]},\"../lib/openzeppelin-contracts/contracts/utils/Context.sol\":{\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12\",\"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF\"]},\"lib/pyth-sdk-solidity/IPyth.sol\":{\"keccak256\":\"0xb34e90b737bf96ae29f9f88865ce8553b0d1f1f64fcb7543fb77e38a780beb65\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://73a76b480a94a0ec5c595498bf8a414c146d7bc3e4e74aacd83a64b60e4f59a3\",\"dweb:/ipfs/QmVFjLgNUaqdgPc9L1qtCqWPuvVLbCZRaBiaJomthSEshX\"]},\"lib/pyth-sdk-solidity/IPythEvents.sol\":{\"keccak256\":\"0x8010bd1020388ddd93fff0e62c1aeb3471af34b10d3c5d404921a5101d8b2109\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://2961074a23dd9348e5ee53193f4f7f2c525cf9cef4042fd71ab877618a36c606\",\"dweb:/ipfs/QmWfUrD8Uhjjx3fyGN9zdvi9icSEx51CQgNrfLqmMSuuSa\"]},\"lib/pyth-sdk-solidity/PythStructs.sol\":{\"keccak256\":\"0xa0df6a9bfd423c573aaaefbc5e65d933ad2bb671564f78803a048ca0dad4ffa6\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://567222d7750a23db74cb0350929e6f35a5f459ea9066276be696fe4a69478706\",\"dweb:/ipfs/QmevUmYUqwdyaKQACwJbg9osTgGDYfbbiqkTZiSXjnMEEe\"]},\"src/PythOracleReader.sol\":{\"keccak256\":\"0x889d45d5a63826b33d94b9235d49256e3a1e966ed785250db2b88986417dbf6f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://70837285edd178cb342560520feac97b3766e7acc60ba477807e4eae3f3bed76\",\"dweb:/ipfs/QmQmE5rC5zFyv3dnhkRRWsr1uwgjRvHRV84etLM8b8us3A\"]},\"src/YieldCalculator.sol\":{\"keccak256\":\"0xce9f2e841d668d171623f0d38780ea3917d0038be9544a9002ebc36afc6667c4\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://da6d4fda0f3657c602aba321dd8cf69cd5275c37a7bc86ab3910fe8e7d4454f8\",\"dweb:/ipfs/QmdoG1SAvFSnDcjrH8S2kRws5SeX7x8Bf4KY5KN2BK5JGJ\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": { "version": "0.8.24+commit.e11b9ed9" },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            { "internalType": "address payable", "name": "_pythOracle", "type": "address" },
+            { "internalType": "address", "name": "_rwaFactory", "type": "address" }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        { "inputs": [], "type": "error", "name": "AssetNotFound" },
+        { "inputs": [], "type": "error", "name": "InvalidAPY" },
+        {
+          "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }],
+          "type": "error",
+          "name": "OwnableInvalidOwner"
+        },
+        {
+          "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
+          "type": "error",
+          "name": "OwnableUnauthorizedAccount"
+        },
+        { "inputs": [], "type": "error", "name": "PriceNotAvailable" },
+        { "inputs": [], "type": "error", "name": "ZeroDuration" },
+        { "inputs": [], "type": "error", "name": "ZeroPrincipal" },
+        {
+          "inputs": [
+            { "internalType": "uint256", "name": "oldAPY", "type": "uint256", "indexed": false },
+            { "internalType": "uint256", "name": "newAPY", "type": "uint256", "indexed": false }
+          ],
+          "type": "event",
+          "name": "BaseAPYUpdated",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true
+            },
+            { "internalType": "address", "name": "newOwner", "type": "address", "indexed": true }
+          ],
+          "type": "event",
+          "name": "OwnershipTransferred",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            { "internalType": "uint256", "name": "tokenId", "type": "uint256", "indexed": true },
+            { "internalType": "uint256", "name": "yield", "type": "uint256", "indexed": false },
+            { "internalType": "uint256", "name": "timestamp", "type": "uint256", "indexed": false }
+          ],
+          "type": "event",
+          "name": "YieldCalculated",
+          "anonymous": false
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "baseAPY",
+          "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }]
+        },
+        {
+          "inputs": [
+            { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+            { "internalType": "uint256", "name": "principalAmount", "type": "uint256" },
+            { "internalType": "uint256", "name": "durationDays", "type": "uint256" }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "calculateYield",
+          "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "owner",
+          "outputs": [{ "internalType": "address", "name": "", "type": "address" }]
+        },
+        {
+          "inputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "previewTokenValue",
+          "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "pythOracle",
+          "outputs": [
+            { "internalType": "contract PythOracleReader", "name": "", "type": "address" }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "renounceOwnership"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "rwaFactory",
+          "outputs": [
+            { "internalType": "contract IRWATokenFactoryForYield", "name": "", "type": "address" }
+          ]
+        },
+        {
+          "inputs": [{ "internalType": "uint256", "name": "newAPY", "type": "uint256" }],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "setBaseAPY"
+        },
+        {
+          "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "transferOwnership"
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {
+          "calculateYield(uint256,uint256,uint256)": {
+            "params": {
+              "durationDays": "Duration in days",
+              "principalAmount": "Principal amount in USD cents",
+              "tokenId": "The token ID"
+            },
+            "returns": { "_0": "uint256 Total amount (principal + interest)" }
+          },
+          "owner()": { "details": "Returns the address of the current owner." },
+          "previewTokenValue(uint256)": {
+            "params": { "tokenId": "The token ID" },
+            "returns": { "_0": "uint256 Current estimated value per fraction in USD cents" }
+          },
+          "renounceOwnership()": {
+            "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+          },
+          "setBaseAPY(uint256)": { "params": { "newAPY": "New base APY (e.g., 525 = 5.25%)" } },
+          "transferOwnership(address)": {
+            "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+          }
+        },
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {
+          "calculateYield(uint256,uint256,uint256)": {
+            "notice": "Calculate yield for a token over a duration (simple interest)"
+          },
+          "previewTokenValue(uint256)": {
+            "notice": "Preview current value of ONE fraction based on oracle price changes"
+          },
+          "setBaseAPY(uint256)": { "notice": "Update the base APY rate" }
+        },
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        "@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/",
+        "@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/",
+        "erc4626-tests/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/erc4626-tests/",
+        "forge-std/=../lib/openzeppelin-contracts/lib/forge-std/src/",
+        "halmos-cheatcodes/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+        "openzeppelin-contracts/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/contracts/",
+        "pyth-sdk-solidity/=lib/pyth-sdk-solidity/"
+      ],
+      "optimizer": { "enabled": true, "runs": 200 },
+      "metadata": { "bytecodeHash": "ipfs" },
+      "compilationTarget": { "src/YieldCalculator.sol": "YieldCalculator" },
+      "evmVersion": "cancun",
+      "libraries": {},
+      "viaIR": true
+    },
+    "sources": {
+      "../lib/openzeppelin-contracts/contracts/access/Ownable.sol": {
+        "keccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb",
+        "urls": [
+          "bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6",
+          "dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
+        ],
+        "license": "MIT"
+      },
+      "../lib/openzeppelin-contracts/contracts/utils/Context.sol": {
+        "keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
+        "urls": [
+          "bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12",
+          "dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
+        ],
+        "license": "MIT"
+      },
+      "lib/pyth-sdk-solidity/IPyth.sol": {
+        "keccak256": "0xb34e90b737bf96ae29f9f88865ce8553b0d1f1f64fcb7543fb77e38a780beb65",
+        "urls": [
+          "bzz-raw://73a76b480a94a0ec5c595498bf8a414c146d7bc3e4e74aacd83a64b60e4f59a3",
+          "dweb:/ipfs/QmVFjLgNUaqdgPc9L1qtCqWPuvVLbCZRaBiaJomthSEshX"
+        ],
+        "license": "Apache-2.0"
+      },
+      "lib/pyth-sdk-solidity/IPythEvents.sol": {
+        "keccak256": "0x8010bd1020388ddd93fff0e62c1aeb3471af34b10d3c5d404921a5101d8b2109",
+        "urls": [
+          "bzz-raw://2961074a23dd9348e5ee53193f4f7f2c525cf9cef4042fd71ab877618a36c606",
+          "dweb:/ipfs/QmWfUrD8Uhjjx3fyGN9zdvi9icSEx51CQgNrfLqmMSuuSa"
+        ],
+        "license": "Apache-2.0"
+      },
+      "lib/pyth-sdk-solidity/PythStructs.sol": {
+        "keccak256": "0xa0df6a9bfd423c573aaaefbc5e65d933ad2bb671564f78803a048ca0dad4ffa6",
+        "urls": [
+          "bzz-raw://567222d7750a23db74cb0350929e6f35a5f459ea9066276be696fe4a69478706",
+          "dweb:/ipfs/QmevUmYUqwdyaKQACwJbg9osTgGDYfbbiqkTZiSXjnMEEe"
+        ],
+        "license": "Apache-2.0"
+      },
+      "src/PythOracleReader.sol": {
+        "keccak256": "0x889d45d5a63826b33d94b9235d49256e3a1e966ed785250db2b88986417dbf6f",
+        "urls": [
+          "bzz-raw://70837285edd178cb342560520feac97b3766e7acc60ba477807e4eae3f3bed76",
+          "dweb:/ipfs/QmQmE5rC5zFyv3dnhkRRWsr1uwgjRvHRV84etLM8b8us3A"
+        ],
+        "license": "MIT"
+      },
+      "src/YieldCalculator.sol": {
+        "keccak256": "0xce9f2e841d668d171623f0d38780ea3917d0038be9544a9002ebc36afc6667c4",
+        "urls": [
+          "bzz-raw://da6d4fda0f3657c602aba321dd8cf69cd5275c37a7bc86ab3910fe8e7d4454f8",
+          "dweb:/ipfs/QmdoG1SAvFSnDcjrH8S2kRws5SeX7x8Bf4KY5KN2BK5JGJ"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "id": 79
+}

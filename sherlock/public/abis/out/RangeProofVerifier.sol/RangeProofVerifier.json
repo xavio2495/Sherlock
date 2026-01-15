@@ -1,0 +1,81 @@
+{
+  "abi": [
+    {
+      "type": "function",
+      "name": "verifyProof",
+      "inputs": [
+        { "name": "_pA", "type": "uint256[2]", "internalType": "uint256[2]" },
+        { "name": "_pB", "type": "uint256[2][2]", "internalType": "uint256[2][2]" },
+        { "name": "_pC", "type": "uint256[2]", "internalType": "uint256[2]" },
+        { "name": "_pubSignals", "type": "uint256[3]", "internalType": "uint256[3]" }
+      ],
+      "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "view"
+    }
+  ],
+  "bytecode": {
+    "object": "0x6080806040523461001657610597908161001b8239f35b5f80fdfe60806040526004361015610011575f80fd5b5f3560e01c6311479fea14610024575f80fd5b3461037357610160806003193601126103735761004036610377565b3660c4116103735761005136610384565b903661016411610373576020916104006040526100ec6101043561007481610392565b6100e76101243561008481610392565b6100e2610144359361009585610392565b7f040d89f53dfe1c8a19a9251cc0359ffba6a5981e90de9122e82903ed0b7f65e16080527f0e1e3099e90ed44783306c2a63667582caa744e3ba69a30649597aae083be91460a0526103c3565b61044d565b6104d7565b61010093828593358452847f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47910135810306610120526044356101405260643590526084356101805260a4356101a0527f2d4d9aa7e302d9df41749d5507949d05dbea33fbb16c643b22f599a2be6df2e26101c0527f14bedd503c37ceb061d8ec60209fe345ce89830a19230301f076caff004d19266101e0527f0967032fcbf776d1afc985f88877f182d38480a653f2decaa9794cbc3bf3060c610200527f0e187847ad4c798374d0d6732bf501847dd68bc0e071241e0213bc7fc13db7ab610220527f304cfbd1e08a704a99f5e847d93f8c3caafddec46b7a0d379da69a4d112346a7610240527f1739c1b1a457a8c7313123d24d2f9192f896b7c63eea05a9d57f06547ad0cec8610260526080516102805260a0516102a0527f198e9393920d483a7260bfb731fb5d25f1aa493335a9e71297e485b7aef312c26102c0527f1800deef121f1e76426a00665e5c4479674322d4f75edadd46debd5cd992f6ed6102e05282610300917f090689d0585ff075ec9e99ad690c3395bc4b313370b38ef355acdadcd122975b83527f12c85ea5db8c6deb4aab71808dcb408fe3d1e7690c43d37b4ce6cc0166fa7daa610320528035610340520135610360527f1ecc2c8eb3445193ac5fcc4470cf56bbf5f75192afb666f35d6265a6c5eb0786610380527f1044af5ea7d64251d12c4ae6afdcffe4b46357919f3580b6119d7a90f0e9eaef6103a0527f1c5b0f7a12697e3ec877c792858d4e500cc9eb92195b5a25ec8c9a94969df42d6103c0527f2b3adcafa2322c59b1acda3b2407b75f23f6e503d0cbb3931b56277f0e66bf516103e0528160086107cf195a01fa9051165f5260205ff35b5f80fd5b9060049160441161037357565b9060c4916101041161037357565b7f30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f000000111156103bb57565b5f805260205ff35b604051907f18556e1d7349a9bc6df49748b7ee32e43fbf8a341e9b9f529ac4983608e8f80b82527f15b560bd3df63d651e4421068e241dbcf594f93ecdef6ad1ae80ad8eda59d79c6020830152604082019081526107cf196040836060816007855a01fa156103bb5760409260066080939284938451905260a05160608401525a01fa156103bb57565b604051907f254e514ce4fcc5f381c2c31a5db6ff72f4cc25c03b92916315e3f8fc5e4d127682527f217f397c5611d545e5270ac1a20ecfd8083436a92720ad74a81c9013c2e54cd56020830152604082019081526107cf196040836060816007855a01fa156103bb5760409260066080939284938451905260a05160608401525a01fa156103bb57565b604051907f06860df2813478ac8c0cedb767ad4e8a7788669f2ddbf470b24877272b0b959b82527f0e834dd35b426342eb32c167125ff0e84561694f531cb2ef8964d24ed4238dbf6020830152604082019081526107cf196040836060816007855a01fa156103bb5760409260066080939284938451905260a05160608401525a01fa156103bb5756fea2646970667358221220f90d36dab7d50be71cf791f35cf0452529e6843c61d17e961ca81b39ea3446df64736f6c63430008180033",
+    "sourceMap": "831:7010:32:-:0;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x60806040526004361015610011575f80fd5b5f3560e01c6311479fea14610024575f80fd5b3461037357610160806003193601126103735761004036610377565b3660c4116103735761005136610384565b903661016411610373576020916104006040526100ec6101043561007481610392565b6100e76101243561008481610392565b6100e2610144359361009585610392565b7f040d89f53dfe1c8a19a9251cc0359ffba6a5981e90de9122e82903ed0b7f65e16080527f0e1e3099e90ed44783306c2a63667582caa744e3ba69a30649597aae083be91460a0526103c3565b61044d565b6104d7565b61010093828593358452847f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47910135810306610120526044356101405260643590526084356101805260a4356101a0527f2d4d9aa7e302d9df41749d5507949d05dbea33fbb16c643b22f599a2be6df2e26101c0527f14bedd503c37ceb061d8ec60209fe345ce89830a19230301f076caff004d19266101e0527f0967032fcbf776d1afc985f88877f182d38480a653f2decaa9794cbc3bf3060c610200527f0e187847ad4c798374d0d6732bf501847dd68bc0e071241e0213bc7fc13db7ab610220527f304cfbd1e08a704a99f5e847d93f8c3caafddec46b7a0d379da69a4d112346a7610240527f1739c1b1a457a8c7313123d24d2f9192f896b7c63eea05a9d57f06547ad0cec8610260526080516102805260a0516102a0527f198e9393920d483a7260bfb731fb5d25f1aa493335a9e71297e485b7aef312c26102c0527f1800deef121f1e76426a00665e5c4479674322d4f75edadd46debd5cd992f6ed6102e05282610300917f090689d0585ff075ec9e99ad690c3395bc4b313370b38ef355acdadcd122975b83527f12c85ea5db8c6deb4aab71808dcb408fe3d1e7690c43d37b4ce6cc0166fa7daa610320528035610340520135610360527f1ecc2c8eb3445193ac5fcc4470cf56bbf5f75192afb666f35d6265a6c5eb0786610380527f1044af5ea7d64251d12c4ae6afdcffe4b46357919f3580b6119d7a90f0e9eaef6103a0527f1c5b0f7a12697e3ec877c792858d4e500cc9eb92195b5a25ec8c9a94969df42d6103c0527f2b3adcafa2322c59b1acda3b2407b75f23f6e503d0cbb3931b56277f0e66bf516103e0528160086107cf195a01fa9051165f5260205ff35b5f80fd5b9060049160441161037357565b9060c4916101041161037357565b7f30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f000000111156103bb57565b5f805260205ff35b604051907f18556e1d7349a9bc6df49748b7ee32e43fbf8a341e9b9f529ac4983608e8f80b82527f15b560bd3df63d651e4421068e241dbcf594f93ecdef6ad1ae80ad8eda59d79c6020830152604082019081526107cf196040836060816007855a01fa156103bb5760409260066080939284938451905260a05160608401525a01fa156103bb57565b604051907f254e514ce4fcc5f381c2c31a5db6ff72f4cc25c03b92916315e3f8fc5e4d127682527f217f397c5611d545e5270ac1a20ecfd8083436a92720ad74a81c9013c2e54cd56020830152604082019081526107cf196040836060816007855a01fa156103bb5760409260066080939284938451905260a05160608401525a01fa156103bb57565b604051907f06860df2813478ac8c0cedb767ad4e8a7788669f2ddbf470b24877272b0b959b82527f0e834dd35b426342eb32c167125ff0e84561694f531cb2ef8964d24ed4238dbf6020830152604082019081526107cf196040836060816007855a01fa156103bb5760409260066080939284938451905260a05160608401525a01fa156103bb5756fea2646970667358221220f90d36dab7d50be71cf791f35cf0452529e6843c61d17e961ca81b39ea3446df64736f6c63430008180033",
+    "sourceMap": "831:7010:32:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;:::i;:::-;;;;;;;3848:3983;;;831:7010;3848:3983;;831:7010;3848:3983;;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;:::i;:::-;;831:7010;3848:3983;;;;;:::i;:::-;;:::i;:::-;;:::i;:::-;831:7010;3848:3983;;;;;;;;;;;;;;;;;831:7010;3848:3983;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;831:7010;3848:3983;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;831:7010;3848:3983;;831:7010;3848:3983;831:7010;;;;;;;;;;;;:::o;:::-;;;;;;;;:::o;3848:3983::-;;-1:-1:-1;3848:3983:32;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;831:7010;3848:3983;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;831:7010;3848:3983;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;831:7010;3848:3983;;;;;;;;;;;;;;;;;;;;:::o",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "verifyProof(uint256[2],uint256[2][2],uint256[2],uint256[3])": "11479fea"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256[2]\",\"name\":\"_pA\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2][2]\",\"name\":\"_pB\",\"type\":\"uint256[2][2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"_pC\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[3]\",\"name\":\"_pubSignals\",\"type\":\"uint256[3]\"}],\"name\":\"verifyProof\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/RangeProofVerifier.sol\":\"RangeProofVerifier\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/\",\":@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/\",\":erc4626-tests/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/erc4626-tests/\",\":forge-std/=../lib/openzeppelin-contracts/lib/forge-std/src/\",\":halmos-cheatcodes/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/\",\":openzeppelin-contracts/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/contracts/\",\":pyth-sdk-solidity/=lib/pyth-sdk-solidity/\"],\"viaIR\":true},\"sources\":{\"src/RangeProofVerifier.sol\":{\"keccak256\":\"0x55748f171e1e4f2a7b54f33af4a0c4cac96377e574e27d5a2609bbc1c1ccaf5a\",\"license\":\"GPL-3.0\",\"urls\":[\"bzz-raw://f2492cfe8282d7fc2aad1b748256be36bd4b208fb8169737855fba264bcef3d1\",\"dweb:/ipfs/QmXQTT5REhucNf1vyu23gU4KHJADS2WUfEeyFR8c5g4UnY\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": { "version": "0.8.24+commit.e11b9ed9" },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            { "internalType": "uint256[2]", "name": "_pA", "type": "uint256[2]" },
+            { "internalType": "uint256[2][2]", "name": "_pB", "type": "uint256[2][2]" },
+            { "internalType": "uint256[2]", "name": "_pC", "type": "uint256[2]" },
+            { "internalType": "uint256[3]", "name": "_pubSignals", "type": "uint256[3]" }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "verifyProof",
+          "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }]
+        }
+      ],
+      "devdoc": { "kind": "dev", "methods": {}, "version": 1 },
+      "userdoc": { "kind": "user", "methods": {}, "version": 1 }
+    },
+    "settings": {
+      "remappings": [
+        "@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/",
+        "@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/",
+        "erc4626-tests/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/erc4626-tests/",
+        "forge-std/=../lib/openzeppelin-contracts/lib/forge-std/src/",
+        "halmos-cheatcodes/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+        "openzeppelin-contracts/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/contracts/",
+        "pyth-sdk-solidity/=lib/pyth-sdk-solidity/"
+      ],
+      "optimizer": { "enabled": true, "runs": 200 },
+      "metadata": { "bytecodeHash": "ipfs" },
+      "compilationTarget": { "src/RangeProofVerifier.sol": "RangeProofVerifier" },
+      "evmVersion": "cancun",
+      "libraries": {},
+      "viaIR": true
+    },
+    "sources": {
+      "src/RangeProofVerifier.sol": {
+        "keccak256": "0x55748f171e1e4f2a7b54f33af4a0c4cac96377e574e27d5a2609bbc1c1ccaf5a",
+        "urls": [
+          "bzz-raw://f2492cfe8282d7fc2aad1b748256be36bd4b208fb8169737855fba264bcef3d1",
+          "dweb:/ipfs/QmXQTT5REhucNf1vyu23gU4KHJADS2WUfEeyFR8c5g4UnY"
+        ],
+        "license": "GPL-3.0"
+      }
+    },
+    "version": 1
+  },
+  "id": 32
+}
