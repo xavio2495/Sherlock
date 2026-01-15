@@ -16,7 +16,15 @@ export function Web3Provider({ children }: Web3ProviderProps) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={darkTheme()}>{children}</RainbowKitProvider>
+        <RainbowKitProvider 
+          theme={darkTheme({
+            accentColor: '#DDFFDE',
+            accentColorForeground: '#01040F',
+            borderRadius: 'none',
+          })}
+        >
+          {children}
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

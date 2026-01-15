@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
  */
 export function AssetCardSkeleton() {
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+    <Card className="overflow-hidden hover:opacity-80 transition-opacity cursor-pointer">
       <CardContent className="p-6 space-y-4">
         {/* Header: Token ID and Asset Type */}
         <div className="flex items-center justify-between">

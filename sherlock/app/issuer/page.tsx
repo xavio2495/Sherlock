@@ -1,15 +1,17 @@
 'use client';
 
+import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { MintRWAForm } from '@/components/issuer/MintRWAForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNextTokenId } from '@/hooks/useRWAContract';
-import { CheckCircle, FileText, Zap, Coins } from 'lucide-react';
+import { CheckCircle, FileText, Zap, Coins, X } from 'lucide-react';
 
 export default function IssuerPage() {
   const { address, isConnected } = useAccount();
   const { data: nextTokenId } = useNextTokenId();
+  const [showHowItWorks, setShowHowItWorks] = useState(true);
 
   // Calculate total minted (nextTokenId is the next ID to be minted, so current count is nextTokenId)
   const totalMinted = nextTokenId ? Number(nextTokenId) : 0;
@@ -40,16 +42,28 @@ export default function IssuerPage() {
       )}
 
       {/* Info Card - How it works */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="text-lg">How It Works</CardTitle>
-          <CardDescription>Follow these simple steps to mint your RWA token</CardDescription>
-        </CardHeader>
+      {showHowItWorks && (
+        <Card className="mb-8">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg">How It Works</CardTitle>
+                <CardDescription>Follow these simple steps to mint your RWA token</CardDescription>
+              </div>
+              <button
+                onClick={() => setShowHowItWorks(false)}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Close"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+          </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex gap-3">
               <div className="flex-shrink-0">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-mantle-secondary text-black font-bold">
+                <div className="flex h-8 w-8 items-center justify-center border-brutalist bg-background text-primary font-bold">
                   1
                 </div>
               </div>
@@ -67,7 +81,7 @@ export default function IssuerPage() {
 
             <div className="flex gap-3">
               <div className="flex-shrink-0">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zk-proof text-white font-bold">
+                <div className="flex h-8 w-8 items-center justify-center border-brutalist bg-background text-primary font-bold">
                   2
                 </div>
               </div>
@@ -85,7 +99,7 @@ export default function IssuerPage() {
 
             <div className="flex gap-3">
               <div className="flex-shrink-0">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white font-bold">
+                <div className="flex h-8 w-8 items-center justify-center border-brutalist bg-background text-primary font-bold">
                   3
                 </div>
               </div>
@@ -102,7 +116,7 @@ export default function IssuerPage() {
 
             <div className="flex gap-3">
               <div className="flex-shrink-0">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500 text-white font-bold">
+                <div className="flex h-8 w-8 items-center justify-center border-brutalist bg-background text-primary font-bold">
                   4
                 </div>
               </div>
@@ -119,6 +133,7 @@ export default function IssuerPage() {
           </div>
         </CardContent>
       </Card>
+      )}
 
       {/* Main Content */}
       {!isConnected ? (

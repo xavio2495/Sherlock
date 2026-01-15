@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useBalance } from 'wagmi';
@@ -22,20 +23,20 @@ export function Header() {
   const hasLowBalance = balanceValue > 0 && balanceValue < 0.01;
 
   const navLinks = [
-    { href: '/issuer', label: 'Mint' },
-    { href: '/marketplace', label: 'Marketplace' },
-    { href: '/portfolio', label: 'Portfolio' },
-    { href: '/oracle', label: 'Oracle' },
+    { href: '/issuer', label: 'MINT' },
+    { href: '/marketplace', label: 'MARKETPLACE' },
+    { href: '/portfolio', label: 'PORTFOLIO' },
+    { href: '/oracle', label: 'ORACLE' },
   ];
 
   return (
-    <header className="border-b border-gray-800 bg-black min-w-[1280px]">
-      <div className="container mx-auto px-4 py-4">
+    <header className="sticky top-0 z-90 border-b-[3px] border-primary bg-background min-w-[1280px]">
+      <div className="container mx-auto px-4 py-1">
         <div className="flex items-center justify-between">
           {/* Logo and Navigation */}
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-2xl font-bold text-white">
-              Sherlock <span className="text-mantle-secondary">RWA</span>
+            <Link href="/" className="hover:opacity-80 transition-opacity">
+              <Image src="/logo-main.png" alt="Sherlock" width={50} height={50} priority />
             </Link>
 
             <nav className="flex items-center gap-2">
@@ -43,12 +44,9 @@ export function Header() {
                 <Button
                   key={link.href}
                   asChild
-                  variant="ghost"
-                  className={
-                    pathname === link.href
-                      ? 'text-mantle-secondary hover:text-mantle-secondary'
-                      : 'text-gray-300 hover:text-white'
-                  }
+                  variant={pathname === link.href ? 'default' : 'ghost'}
+                  size="default"
+                  className="font-bold text-base"
                 >
                   <Link href={link.href}>{link.label}</Link>
                 </Button>
@@ -62,9 +60,9 @@ export function Header() {
             {address && (
               <Badge
                 variant={isCorrectNetwork ? 'default' : 'destructive'}
-                className={isCorrectNetwork ? 'bg-green-600' : ''}
+                className={isCorrectNetwork ? 'border-verified' : 'border-warning'}
               >
-                {isCorrectNetwork ? 'Mantle Sepolia' : 'Wrong Network'}
+                {isCorrectNetwork ? 'MANTLE SEPOLIA' : 'WRONG NETWORK'}
               </Badge>
             )}
 
@@ -74,17 +72,20 @@ export function Header() {
                 href="https://faucet.sepolia.mantle.xyz/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-yellow-500 hover:text-yellow-400 transition-colors"
+                className="text-sm border-brutalist px-3 py-1 border-warning hover:opacity-80 transition-opacity bg-background"
               >
-                ⚠️ Low balance. Get testnet MNT →
+                ⚠ LOW BALANCE. GET MNT →
               </a>
             )}
 
             {/* Connect Button */}
-            <ConnectButton />
+            <div className="[&_button]:hover:opacity-80 [&_button]:transition-opacity">
+              <ConnectButton />
+            </div>
           </div>
         </div>
       </div>
     </header>
   );
 }
+

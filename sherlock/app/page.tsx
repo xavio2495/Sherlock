@@ -1,65 +1,151 @@
+import Link from 'next/link';
 import Image from 'next/image';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-16">
+        {/* Hero Section */}
+        <div className="text-center mb-16 pattern-grid py-16 border-brutalist shadow-brutalist-lg">
+          <div className="flex justify-center mb-6">
+            <Image src="/logo-main.png" alt="Sherlock" width={200} height={200} priority />
+          </div>
+          <h1 className="text-3xl mb-8 max-w-2xl mx-auto">
+            Secure RWA tokenization with Privacy-Preserving Oracle Feeds
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{' '}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{' '}
-            or the{' '}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{' '}
-            center.
-          </p>
+          <div className="flex gap-4 justify-center">
+            <Link href="/issuer">
+              <Button size="lg" className="text-lg px-8">
+                ISSUE ASSETS
+              </Button>
+            </Link>
+            <Link href="/marketplace">
+              <Button variant="outline" size="lg" className="text-lg px-8">
+                MARKETPLACE
+              </Button>
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Features Grid */}
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <Card className="hover:opacity-80 transition-opacity cursor-pointer pattern-diagonal">
+            <CardContent className="p-8">
+              <h3 className="text-2xl font-heading mb-4">ZK PRIVACY</h3>
+              <p className="text-foreground/80">
+                Verifiable ownership without revealing exact holdings. Zero-knowledge proofs for
+                eligibility and range verification.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:opacity-80 transition-opacity cursor-pointer pattern-v">
+            <CardContent className="p-8">
+              <h3 className="text-2xl font-heading mb-4">ORACLE FEEDS</h3>
+              <p className="text-foreground/80">
+                Real-time price data via Pyth Network. On-chain verification for all asset
+                valuations and market data.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:opacity-80 transition-opacity cursor-pointer pattern-diagonal-left">
+            <CardContent className="p-8">
+              <h3 className="text-2xl font-heading mb-4">MANTLE NETWORK</h3>
+              <p className="text-foreground/80">
+                Built on Mantle testnet for low-cost, high-throughput transactions with ERC-1155
+                fractional ownership.
+              </p>
+            </CardContent>
+          </Card>
         </div>
-      </main>
+
+        {/* Quick Access */}
+        <div className="grid md:grid-cols-2 gap-8">
+          <Card className="pattern-dots bg-secondary">
+            <CardContent className="p-8">
+              <h3 className="text-2xl font-heading mb-4">FOR ISSUERS</h3>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-start">
+                  <span className="mr-2">■</span>
+                  <span>Tokenize real-world assets</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="mr-2">■</span>
+                  <span>Set custom lockup periods</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="mr-2">■</span>
+                  <span>Oracle-backed valuations</span>
+                </li>
+              </ul>
+              <Link href="/issuer">
+                <Button className="w-full">START ISSUING →</Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="pattern-dots bg-secondary">
+            <CardContent className="p-8">
+              <h3 className="text-2xl font-heading mb-4">FOR INVESTORS</h3>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-start">
+                  <span className="mr-2">■</span>
+                  <span>Browse tokenized assets</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="mr-2">■</span>
+                  <span>Private ownership verification</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="mr-2">■</span>
+                  <span>Track your portfolio</span>
+                </li>
+              </ul>
+              <div className="grid grid-cols-2 gap-4">
+                <Link href="/marketplace">
+                  <Button variant="outline" className="w-full">
+                    BROWSE →
+                  </Button>
+                </Link>
+                <Link href="/portfolio">
+                  <Button variant="outline" className="w-full">
+                    PORTFOLIO →
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <p className="text-center text-regular text-muted-foreground mt-12 py-8 border-t space-y-1">
+        <span className="block">Built on Mantle Testnet</span>
+        <span className="block">
+          {' '}
+          <a
+            href="https://github.com/xavio2495"
+            className="underline hover:text-foreground transition-colors"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Immanuel
+          </a>{' '}
+          X
+          {' '}
+          <a
+            href="https://github.com/charlesms1246"
+            className="underline hover:text-foreground transition-colors"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Charles
+          </a>
+        </span>
+      </p>
+
     </div>
   );
 }

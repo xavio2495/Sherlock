@@ -99,7 +99,7 @@ export function MintRWAForm() {
       <div className="space-y-6">
         <TransactionStatus txHash={txHash} status="success" />
 
-        <Card className="border-mantle-secondary bg-green-50 dark:bg-green-950/10">
+        <Card className="border-brutalist">
           <CardContent className="pt-6 text-center space-y-4">
             <div>
               <h3 className="text-2xl font-bold">🎉 Success!</h3>
@@ -119,7 +119,6 @@ export function MintRWAForm() {
               </Button>
               <Button
                 onClick={() => router.push('/marketplace')}
-                className="bg-mantle-secondary hover:bg-mantle-secondary/90"
               >
                 View Marketplace
               </Button>
@@ -261,8 +260,8 @@ export function MintRWAForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-mantle-secondary hover:bg-mantle-secondary/90 text-black"
         size="lg"
+        className="w-full"
       >
         {loading ? (
           <>

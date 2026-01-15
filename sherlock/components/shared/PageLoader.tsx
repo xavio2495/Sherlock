@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
 
 interface PageLoaderProps {
@@ -8,31 +9,28 @@ interface PageLoaderProps {
  * Full-page loading spinner with Sherlock branding
  * Used for initial page loads and critical data fetching
  */
-export function PageLoader({ message = 'Loading...' }: PageLoaderProps) {
+export function PageLoader({ message = 'LOADING...' }: PageLoaderProps) {
   return (
-    <div className="fixed inset-0 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="text-center space-y-6">
-        {/* Sherlock Logo Placeholder */}
+    <div className="fixed inset-0 bg-background/90 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="text-center space-y-8">
+        {/* Sherlock Logo */}
         <div className="flex justify-center">
-          <div className="relative">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-mantle-primary to-mantle-secondary/20 flex items-center justify-center">
-              <span className="text-3xl font-bold text-white">S</span>
-            </div>
-            <div className="absolute -inset-2 bg-gradient-to-br from-mantle-secondary/20 to-transparent rounded-full animate-pulse" />
-          </div>
+          <Image src="/logo.png" alt="Sherlock" width={150} height={50} priority />
         </div>
 
         {/* Loading Spinner */}
-        <div className="flex items-center justify-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-mantle-primary" />
-          <p className="text-xl font-semibold text-gray-900 dark:text-gray-100">{message}</p>
+        <div className="flex items-center justify-center gap-4">
+          <div className="border-brutalist p-2">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+          <p className="text-2xl font-heading tracking-wider">{message}</p>
         </div>
 
-        {/* Loading Indicator Dots */}
+        {/* Loading Indicator Bars */}
         <div className="flex justify-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-mantle-secondary animate-bounce [animation-delay:-0.3s]" />
-          <div className="w-2 h-2 rounded-full bg-mantle-secondary animate-bounce [animation-delay:-0.15s]" />
-          <div className="w-2 h-2 rounded-full bg-mantle-secondary animate-bounce" />
+          <div className="w-12 h-1 bg-primary animate-pulse [animation-delay:-0.3s]" />
+          <div className="w-12 h-1 bg-primary animate-pulse [animation-delay:-0.15s]" />
+          <div className="w-12 h-1 bg-primary animate-pulse" />
         </div>
       </div>
     </div>

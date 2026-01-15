@@ -24,13 +24,13 @@ export default function Error({
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="max-w-lg w-full border-red-200">
+      <Card className="max-w-lg w-full border-warning shadow-brutalist">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-red-100 rounded-full">
-              <AlertCircle className="h-6 w-6 text-red-600" />
+            <div className="p-3 bg-destructive border-brutalist">
+              <AlertCircle className="h-6 w-6 text-primary-foreground" />
             </div>
-            <CardTitle className="text-2xl">Something went wrong!</CardTitle>
+            <CardTitle className="text-2xl font-heading">ERROR!</CardTitle>
           </div>
         </CardHeader>
 
@@ -43,26 +43,26 @@ export default function Error({
           {/* Error Details (development only) */}
           {process.env.NODE_ENV === 'development' && (
             <details className="mt-4">
-              <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900">
-                Error Details (Development Only)
+              <summary className="cursor-pointer text-sm font-medium hover:opacity-70">
+                ERROR DETAILS (DEVELOPMENT)
               </summary>
-              <div className="mt-2 p-3 bg-gray-100 rounded-md">
-                <p className="text-xs font-mono text-red-600 break-all">{error.message}</p>
+              <div className="mt-2 p-3 bg-muted border-brutalist">
+                <p className="text-xs font-mono text-destructive break-all">{error.message}</p>
                 {error.digest && (
-                  <p className="text-xs text-gray-500 mt-2">Digest: {error.digest}</p>
+                  <p className="text-xs text-muted-foreground mt-2">Digest: {error.digest}</p>
                 )}
               </div>
             </details>
           )}
 
           {/* Common Issues */}
-          <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-            <h4 className="text-sm font-semibold text-amber-900 mb-2">Common Issues:</h4>
-            <ul className="text-sm text-amber-800 space-y-1 list-disc list-inside">
-              <li>Backend server not running (start with: cd backend && npm run dev)</li>
-              <li>Wallet not connected or wrong network</li>
-              <li>Contract addresses not configured correctly</li>
-              <li>Browser extension conflicts</li>
+          <div className="mt-6 p-4 bg-secondary border-warning border-brutalist">
+            <h4 className="text-sm font-heading mb-2">COMMON ISSUES:</h4>
+            <ul className="text-sm space-y-1">
+              <li>■ Backend server not running</li>
+              <li>■ Wallet not connected or wrong network</li>
+              <li>■ Contract addresses not configured</li>
+              <li>■ Browser extension conflicts</li>
             </ul>
           </div>
         </CardContent>
@@ -70,12 +70,12 @@ export default function Error({
         <CardFooter className="flex gap-3">
           <Button onClick={reset} className="flex-1">
             <RefreshCw className="mr-2 h-4 w-4" />
-            Try Again
+            TRY AGAIN
           </Button>
           <Button variant="outline" asChild className="flex-1">
             <Link href="/">
               <Home className="mr-2 h-4 w-4" />
-              Go Home
+              GO HOME
             </Link>
           </Button>
         </CardFooter>

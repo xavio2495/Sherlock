@@ -1,15 +1,9 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import { Web3Provider } from '@/components/providers/Web3Provider';
 import { Header } from '@/components/layout/Header';
 import { Toaster } from '@/components/ui/sonner';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
 
 export const metadata: Metadata = {
   title: 'Sherlock RWA Platform',
@@ -27,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased dark`}>
+    <html lang="en">
+      <body className="antialiased">
         <Web3Provider>
           <Header />
           <main>{children}</main>

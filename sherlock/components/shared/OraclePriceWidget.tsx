@@ -30,7 +30,7 @@ export function OraclePriceWidget({ data, icon, symbol, change24h }: OraclePrice
   const isPositiveChange = change24h !== undefined && change24h >= 0;
 
   return (
-    <Card className="relative overflow-hidden hover:shadow-lg transition-shadow">
+    <Card className="relative overflow-hidden hover:opacity-80 transition-opacity cursor-pointer">
       {/* Live indicator */}
       <div className="absolute top-4 right-4">
         <Badge variant="outline" className="gap-1.5 bg-green-50 border-green-200">
