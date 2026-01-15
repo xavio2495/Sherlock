@@ -173,6 +173,36 @@ router.post('/api/oracle/update-prices', async (req: Request, res: Response) => 
   }
 });
 
+/**
+ * GET /api/oracle/metrics
+ * Get oracle service metrics and statistics
+ */
+router.get('/api/oracle/metrics', (_req: Request, res: Response) => {
+  try {
+    const metrics = pythClient.getMetrics();
+    
+    res.status(200).json({
+      success: true,
+      metrics: {
+        ...metrics,
+        lastUpdateDate: metrics.lastUpdateTimestamp > 0 
+          ? new Date(metrics.lastUpdateTimestamp).toISOString() 
+          : null,
+        successRate: metrics.totalUpdates > 0
+          ? ((metrics.successfulUpdates / metrics.totalUpdates) * 100).toFixed(2) + '%'
+          : '0%',
+        uptime: process.uptime(),
+      },
+    });
+  } catch (error: any) {
+    logger.error('Failed to get oracle metrics', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Internal server error',
+    });
+  }
+});
+
 // ============ Error Handler ============
 
 router.use((error: Error, _req: Request, res: Response, _next: any) => {

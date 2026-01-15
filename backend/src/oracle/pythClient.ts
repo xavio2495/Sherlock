@@ -1,5 +1,6 @@
 import { HermesClient } from '@pythnetwork/hermes-client';
 import { ethers } from 'ethers';
+import * as cron from 'node-cron';
 import { config } from '../utils/config';
 import { contractService } from '../utils/contractInteraction';
 import { PriceData, OraclePriceResponse, OracleUpdateResponse, APIError } from '../types';
@@ -19,8 +20,15 @@ const PYTH_ABI = [
  */
 export class PythClient {
   private connection: HermesClient;
-  private updateIntervalId?: NodeJS.Timeout;
+  private cronTask?: cron.ScheduledTask;
   private pythContract: ethers.Contract;
+  private metrics = {
+    totalUpdates: 0,
+    successfulUpdates: 0,
+    failedUpdates: 0,
+    lastUpdateTimestamp: 0,
+    lastUpdateStatus: 'idle' as 'idle' | 'running' | 'success' | 'error',
+  };
 
   constructor() {
     this.connection = new HermesClient(config.pyth.apiUrl, {
@@ -103,6 +111,37 @@ export class PythClient {
       logger.error('Failed to get price update data', error);
       throw new APIError(500, 'Failed to get price update data');
     }
+  }
+
+  /**
+   * Retry wrapper with exponential backoff
+   * @param fn Function to retry
+   * @param retries Number of retry attempts (default: 3)
+   * @param delay Delay between retries in ms (default: 15000)
+   */
+  private async retryWithDelay<T>(
+    fn: () => Promise<T>,
+    retries: number = 3,
+    delay: number = 15000
+  ): Promise<T> {
+    let lastError: any;
+    
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        logger.info(`Attempt ${attempt}/${retries}`);
+        return await fn();
+      } catch (error: any) {
+        lastError = error;
+        logger.error(`Attempt ${attempt}/${retries} failed: ${error.message}`);
+        
+        if (attempt < retries) {
+          logger.info(`Retrying in ${delay / 1000} seconds...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+    
+    throw lastError;
   }
 
   /**
@@ -211,10 +250,20 @@ export class PythClient {
 
   /**
    * Start automatic price update cron job
+   * Runs every 5 minutes by default (configurable via ORACLE_UPDATE_INTERVAL_MS)
+   * Uses node-cron for reliable scheduling with retry logic
    */
   startPriceUpdateCron(): void {
     const intervalMs = config.oracle.updateIntervalMs;
-    logger.info(`Starting price update cron job (interval: ${intervalMs}ms)`);
+    const intervalMinutes = Math.floor(intervalMs / 60000);
+    
+    // Convert interval to cron expression (every N minutes)
+    const cronExpression = `*/${intervalMinutes} * * * *`;
+    
+    logger.info(`Starting price update cron job`);
+    logger.info(`Update interval: ${intervalMs}ms (${intervalMinutes} minutes)`);
+    logger.info(`Cron expression: ${cronExpression}`);
+    logger.info(`Retry policy: 3 attempts with 15-second delays`);
 
     const allPriceFeeds = [
       config.pyth.priceFeeds.ethUsd,
@@ -222,20 +271,85 @@ export class PythClient {
       config.pyth.priceFeeds.usdcUsd,
     ];
 
-    this.updateIntervalId = setInterval(async () => {
-      try {
-        logger.info('Running scheduled price update');
-        await this.updatePricesOnChain(allPriceFeeds);
-      } catch (error) {
-        logger.error('Scheduled price update failed', error);
+    // Schedule cron job using node-cron
+    this.cronTask = cron.schedule(cronExpression, async () => {
+      if (this.metrics.lastUpdateStatus === 'running') {
+        logger.warn('Previous update still running, skipping this cycle');
+        return;
       }
-    }, intervalMs);
 
+      try {
+        this.metrics.lastUpdateStatus = 'running';
+        this.metrics.totalUpdates++;
+        
+        logger.info('='.repeat(60));
+        logger.info(`Running scheduled price update #${this.metrics.totalUpdates}`);
+        logger.info(`Feeds to update: ETH/USD, BTC/USD, USDC/USD`);
+        
+        const startTime = Date.now();
+        
+        // Use retry wrapper for price updates
+        const result = await this.retryWithDelay(
+          () => this.updatePricesOnChain(allPriceFeeds),
+          3,  // 3 retry attempts
+          15000  // 15 second delay
+        );
+        
+        const duration = Date.now() - startTime;
+        
+        if (result.success) {
+          this.metrics.successfulUpdates++;
+          this.metrics.lastUpdateStatus = 'success';
+          this.metrics.lastUpdateTimestamp = Date.now();
+          
+          logger.info(`✓ Price update successful (${duration}ms)`);
+          logger.info(`Updated feeds: ${result.updatedFeeds?.join(', ')}`);
+          logger.info(`Transaction hashes: ${result.txHashes?.join(', ')}`);
+        } else {
+          throw new Error(result.error || 'Update failed');
+        }
+        
+        // Log metrics
+        this.logMetrics();
+        
+      } catch (error: any) {
+        this.metrics.failedUpdates++;
+        this.metrics.lastUpdateStatus = 'error';
+        logger.error('✗ Scheduled price update failed after all retries', error);
+        this.logMetrics();
+      } finally {
+        logger.info('='.repeat(60));
+      }
+    });
+
+    logger.info('Cron job scheduled successfully');
+    
     // Run initial update after 5 seconds to allow provider initialization
+    logger.info('Initial update will run in 5 seconds...');
     setTimeout(() => {
-      this.updatePricesOnChain(allPriceFeeds).catch((error) => {
-        logger.error('Initial price update failed', error);
-      });
+      logger.info('Running initial price update...');
+      this.metrics.totalUpdates++;
+      
+      this.retryWithDelay(
+        () => this.updatePricesOnChain(allPriceFeeds),
+        3,
+        15000
+      )
+        .then((result) => {
+          if (result.success) {
+            this.metrics.successfulUpdates++;
+            this.metrics.lastUpdateStatus = 'success';
+            this.metrics.lastUpdateTimestamp = Date.now();
+            logger.info('✓ Initial price update successful');
+            this.logMetrics();
+          }
+        })
+        .catch((error) => {
+          this.metrics.failedUpdates++;
+          this.metrics.lastUpdateStatus = 'error';
+          logger.error('✗ Initial price update failed', error);
+          this.logMetrics();
+        });
     }, 5000);
   }
 
@@ -243,10 +357,39 @@ export class PythClient {
    * Stop the price update cron job
    */
   stopPriceUpdateCron(): void {
-    if (this.updateIntervalId) {
-      clearInterval(this.updateIntervalId);
+    if (this.cronTask) {
+      this.cronTask.stop();
       logger.info('Price update cron job stopped');
+      this.logMetrics();
     }
+  }
+
+  /**
+   * Log current metrics and statistics
+   */
+  private logMetrics(): void {
+    const successRate = this.metrics.totalUpdates > 0
+      ? ((this.metrics.successfulUpdates / this.metrics.totalUpdates) * 100).toFixed(2)
+      : '0.00';
+    
+    const lastUpdate = this.metrics.lastUpdateTimestamp > 0
+      ? new Date(this.metrics.lastUpdateTimestamp).toISOString()
+      : 'Never';
+    
+    logger.info('📊 Oracle Metrics:');
+    logger.info(`  Total Updates: ${this.metrics.totalUpdates}`);
+    logger.info(`  Successful: ${this.metrics.successfulUpdates}`);
+    logger.info(`  Failed: ${this.metrics.failedUpdates}`);
+    logger.info(`  Success Rate: ${successRate}%`);
+    logger.info(`  Last Update: ${lastUpdate}`);
+    logger.info(`  Status: ${this.metrics.lastUpdateStatus}`);
+  }
+
+  /**
+   * Get current metrics (for monitoring/API endpoints)
+   */
+  getMetrics() {
+    return { ...this.metrics };
   }
 }
 
