@@ -90,9 +90,11 @@ export interface PurchaseRequest {
   tokenId: number;
   amount: number;
   buyerAddress: string;
-  zkProof: string;
-  secret: string;
-  nullifier: string;
+  zkProofInput: {
+    commitment: string;
+    secret: string;
+    nullifier: string;
+  };
 }
 
 export interface PurchaseResponse {

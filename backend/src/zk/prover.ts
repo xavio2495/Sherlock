@@ -105,6 +105,19 @@ async function loadCircuit(circuitName: string): Promise<CachedCircuit> {
 }
 
 /**
+ * Convert string to BigInt using keccak256 hash
+ * This allows arbitrary strings to be used as ZK inputs
+ */
+function stringToBigInt(str: string): bigint {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hashBuffer = Buffer.from(data);
+  // Use first 31 bytes to stay within field bounds
+  const hex = '0x' + hashBuffer.toString('hex').slice(0, 62);
+  return BigInt(hex);
+}
+
+/**
  * Compute Poseidon hash commitment
  * Used for generating commitments to secrets or amounts
  */
@@ -112,7 +125,14 @@ export async function computeCommitment(inputs: string[] | number[]): Promise<st
   const hash = await initPoseidon();
   
   // Convert inputs to BigInts
-  const bigIntInputs = inputs.map((input) => BigInt(input.toString()));
+  const bigIntInputs = inputs.map((input) => {
+    if (typeof input === 'string') {
+      // Convert string to BigInt via hash
+      return stringToBigInt(input);
+    } else {
+      return BigInt(input);
+    }
+  });
   
   // Compute Poseidon hash
   const commitment = hash(bigIntInputs);
@@ -143,10 +163,10 @@ export async function generateEligibilityProof(
     const commitment = await computeCommitment([secret, nullifier]);
     logger.info(`Computed commitment: ${commitment}`);
 
-    // Prepare circuit inputs
+    // Prepare circuit inputs - convert strings to BigInt format
     const inputs = {
-      secret: secret,
-      nullifier: nullifier,
+      secret: stringToBigInt(secret).toString(),
+      nullifier: stringToBigInt(nullifier).toString(),
     };
 
     logger.info('Generating witness...');

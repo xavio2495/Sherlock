@@ -170,14 +170,33 @@ export const purchaseSchema = Joi.object({
       'any.required': 'Buyer address is required',
     }),
   
-  zkProof: Joi.string()
-    .required()
-    .messages({
-      'any.required': 'ZK proof is required',
-    }),
-  
-  secret: Joi.string()
-    .required()
+  zkProofInput: Joi.object({
+    commitment: Joi.string()
+      .pattern(/^0x[a-fA-F0-9]{64}$/)
+      .required()
+      .messages({
+        'string.pattern.base': 'Invalid commitment format (must be 32-byte hex with 0x prefix)',
+        'any.required': 'ZK proof commitment is required',
+      }),
+    
+    secret: Joi.string()
+      .min(1)
+      .max(256)
+      .required()
+      .messages({
+        'string.min': 'Secret cannot be empty',
+        'any.required': 'ZK proof secret is required',
+      }),
+    
+    nullifier: Joi.string()
+      .min(1)
+      .max(256)
+      .required()
+      .messages({
+        'string.min': 'Nullifier cannot be empty',
+        'any.required': 'ZK proof nullifier is required',
+      }),
+  }).required()
     .messages({
       'any.required': 'Secret is required',
     }),
