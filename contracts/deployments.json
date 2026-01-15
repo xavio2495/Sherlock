@@ -1,14 +1,17 @@
 {
   "network": "mantle-testnet",
   "chainId": 5003,
-  "deploymentDate": "1768471775",
+  "deploymentDate": "1768475051",
   "deployer": "0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38",
   "pythContract": "0x98046Bd286715D3B0BC227Dd7a956b83D8978603",
   "contracts": {
-    "ZKVerifier": "0x56378BCC125EE84D2503983Be8A0ED6815D18B83",
-    "PythOracleReader": "0xA1F9C97aa33bC28E8F9F50052dD0Df861109382a",
-    "FractionManager": "0xc20F5d914476B6Daa723391Cb418E7944978938D",
-    "RWATokenFactory": "0x8a2208b3682cAc859D45fe38a5C611fDBc58e68B",
-    "YieldCalculator": "0xa93c6A3A7c28d8884c4bFF5083ae8d60AcC9c82b"
+    "ZKVerifier": "0xE504B6FB1BE655164a5EF14CCa5822ED7d3305ef",
+    "PythOracleReader": "0xD78e55b27D452c07a0D19A500F3d67E2B5754478",
+    "FractionManager": "0xE339a4Ac767011d767C17e8b2718EEb87687257B",
+    "RWATokenFactory": "0xeA157DE7D1ec58a0610D82171bbb4873bc19319B",
+    "YieldCalculator": "0x16D6d4335A01f75c252f86607a076700427Fea00",
+    "EligibilityVerifier": "0x402FF5AA2735Dca465D9784AD7f3A43CCfa7deC2",
+    "RangeProofVerifier": "0xCa3b3D111725E1b006FFB8924a88eBB171d6CCfD",
+    "ZKVerifierV2": "0x7BEBCFC47be110a0175452456267bFdaD45DdE8B"
   }
 }

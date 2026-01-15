@@ -18,11 +18,18 @@ const logger = new Logger('Routes');
 // ============ Health Check ============
 
 router.get('/health', (_req: Request, res: Response) => {
+  const circuitsReady = zkProver.areCircuitsReady();
+  const circuitStatus = zkProver.getCircuitStatus();
+  
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
     network: 'Mantle Testnet',
     chainId: config.chainId,
+    circuits: {
+      ready: circuitsReady,
+      status: circuitStatus,
+    },
   });
 });
 

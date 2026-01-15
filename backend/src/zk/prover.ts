@@ -1,109 +1,353 @@
+import * as snarkjs from 'snarkjs';
+import { buildPoseidon } from 'circomlibjs';
+import { readFileSync, existsSync } from 'fs';
+import path from 'path';
 import { ZKProofRequest, ZKProofResponse, APIError } from '../types';
 import Logger from '../utils/logger';
 
-const logger = new Logger('ZKProver');
+const logger = new Logger('Prover');
 
 /**
- * ZK Proof Generation Service
- * Uses SnarkJS to generate zero-knowledge proofs for eligibility and range proofs
+ * ZK Proof Generator using SnarkJS
+ * Generates Groth16 proofs for eligibility and range proofs
  */
-export class ZKProver {
+
+interface CircuitArtifacts {
+  wasmPath: string;
+  zkeyPath: string;
+  vkeyPath: string;
+}
+
+interface CachedCircuit {
+  wasm: Buffer;
+  zkey: any;
+  vkey: any;
+}
+
+// Circuit paths configuration
+const CIRCUITS_DIR = path.join(__dirname, '../../circuits');
+const BUILD_DIR = path.join(CIRCUITS_DIR, 'build');
+const KEYS_DIR = path.join(CIRCUITS_DIR, 'keys');
+
+const CIRCUITS: Record<string, CircuitArtifacts> = {
+  eligibility: {
+    wasmPath: path.join(BUILD_DIR, 'eligibility_js', 'eligibility.wasm'),
+    zkeyPath: path.join(KEYS_DIR, 'eligibility_final.zkey'),
+    vkeyPath: path.join(KEYS_DIR, 'eligibility_verification_key.json'),
+  },
+  rangeProof: {
+    wasmPath: path.join(BUILD_DIR, 'rangeProof_js', 'rangeProof.wasm'),
+    zkeyPath: path.join(KEYS_DIR, 'rangeProof_final.zkey'),
+    vkeyPath: path.join(KEYS_DIR, 'rangeProof_verification_key.json'),
+  },
+};
+
+// Circuit cache for performance
+const circuitCache: Record<string, CachedCircuit> = {};
+
+// Poseidon hasher instance
+let poseidon: any = null;
+
+/**
+ * Initialize Poseidon hasher
+ */
+async function initPoseidon() {
+  if (!poseidon) {
+    poseidon = await buildPoseidon();
+    logger.info('Poseidon hasher initialized');
+  }
+  return poseidon;
+}
+
+/**
+ * Load circuit artifacts (WASM + proving key)
+ * Caches in memory for performance
+ */
+async function loadCircuit(circuitName: string): Promise<CachedCircuit> {
+  // Return cached if available
+  if (circuitCache[circuitName]) {
+    logger.info(`Using cached circuit: ${circuitName}`);
+    return circuitCache[circuitName];
+  }
+
+  const artifacts = CIRCUITS[circuitName];
+  if (!artifacts) {
+    throw new APIError(400, `Unknown circuit: ${circuitName}`);
+  }
+
+  // Check if files exist
+  if (!existsSync(artifacts.wasmPath)) {
+    throw new APIError(
+      500,
+      `Circuit WASM not found: ${artifacts.wasmPath}. Run ./scripts/setup-circuits.sh`
+    );
+  }
+
+  if (!existsSync(artifacts.zkeyPath)) {
+    throw new APIError(
+      500,
+      `Proving key not found: ${artifacts.zkeyPath}. Run ./scripts/setup-circuits.sh`
+    );
+  }
+
+  logger.info(`Loading circuit: ${circuitName}`);
+
+  // Load artifacts
+  const wasm = readFileSync(artifacts.wasmPath);
+  const zkey = readFileSync(artifacts.zkeyPath);
+  const vkey = JSON.parse(readFileSync(artifacts.vkeyPath, 'utf-8'));
+
+  // Cache for future use
+  circuitCache[circuitName] = { wasm, zkey, vkey };
+
+  logger.info(`Circuit loaded and cached: ${circuitName}`);
+  return circuitCache[circuitName];
+}
+
+/**
+ * Compute Poseidon hash commitment
+ * Used for generating commitments to secrets or amounts
+ */
+export async function computeCommitment(inputs: string[] | number[]): Promise<string> {
+  const hash = await initPoseidon();
   
-  /**
-   * Generate a ZK proof based on the proof type
-   */
-  async generateProof(request: ZKProofRequest): Promise<ZKProofResponse> {
-    try {
-      logger.info(`Generating ${request.proofType} proof for user ${request.userAddress}`);
+  // Convert inputs to BigInts
+  const bigIntInputs = inputs.map((input) => BigInt(input.toString()));
+  
+  // Compute Poseidon hash
+  const commitment = hash(bigIntInputs);
+  
+  // Convert to string (decimal format)
+  return hash.F.toString(commitment);
+}
 
-      if (request.proofType === 'eligibility') {
-        return await this.generateEligibilityProof(request);
-      } else if (request.proofType === 'range') {
-        return await this.generateRangeProof(request);
-      } else {
-        throw new APIError(400, `Invalid proof type: ${request.proofType}`);
-      }
-    } catch (error: any) {
-      logger.error('Proof generation failed', error);
-      return {
-        success: false,
-        error: error.message || 'Proof generation failed',
-      };
+/**
+ * Generate eligibility proof
+ * Proves knowledge of (secret, nullifier) that produce a specific commitment
+ * 
+ * @param secret - User's secret credential
+ * @param nullifier - Unique identifier (prevents double-spending)
+ * @returns Groth16 proof + public signals (commitment)
+ */
+export async function generateEligibilityProof(
+  secret: string,
+  nullifier: string
+): Promise<ZKProofResponse> {
+  try {
+    logger.info('Generating eligibility proof');
+
+    // Load circuit
+    const circuit = await loadCircuit('eligibility');
+
+    // Compute expected commitment
+    const commitment = await computeCommitment([secret, nullifier]);
+    logger.info(`Computed commitment: ${commitment}`);
+
+    // Prepare circuit inputs
+    const inputs = {
+      secret: secret,
+      nullifier: nullifier,
+    };
+
+    logger.info('Generating witness...');
+
+    // Generate witness (compute circuit with inputs)
+    const { proof, publicSignals } = await snarkjs.groth16.fullProve(
+      inputs,
+      circuit.wasm,
+      circuit.zkey
+    );
+
+    logger.info('Witness generated, creating proof...');
+
+    // Verify commitment matches
+    if (publicSignals[0] !== commitment) {
+      throw new APIError(500, 'Commitment mismatch in proof generation');
     }
-  }
 
-  /**
-   * Generate eligibility proof using commitment scheme
-   * Circuit: circuits/eligibility.circom
-   */
-  private async generateEligibilityProof(request: ZKProofRequest): Promise<ZKProofResponse> {
-    const { commitment, secret } = request.inputs;
+    // Verify proof locally before returning
+    const vkey = circuit.vkey;
+    const isValid = await snarkjs.groth16.verify(vkey, publicSignals, proof);
 
-    if (!commitment || !secret) {
-      throw new APIError(400, 'Commitment and secret are required for eligibility proof');
+    if (!isValid) {
+      throw new APIError(500, 'Generated proof failed verification');
     }
 
-    // TODO: Implement SnarkJS proof generation
-    // 1. Load compiled circuit (eligibility.wasm)
-    // 2. Load proving key (eligibility_final.zkey)
-    // 3. Prepare witness inputs
-    // 4. Generate proof using snarkjs.groth16.fullProve()
-    // 5. Return proof and public signals
+    logger.info('Eligibility proof generated and verified successfully');
 
-    logger.warn('Eligibility proof generation not yet implemented - returning mock proof');
+    // Serialize proof for on-chain verification
+    const proofCalldata = await snarkjs.groth16.exportSolidityCallData(proof, publicSignals);
 
-    // Mock response for now
     return {
       success: true,
-      proof: '0x' + 'mock_proof'.repeat(10),
-      publicSignals: [commitment],
+      proof: JSON.stringify(proof),
+      publicSignals: publicSignals.map((s: any) => s.toString()),
+      commitment: commitment,
+      solidityCalldata: proofCalldata,
     };
-  }
-
-  /**
-   * Generate range proof for privacy-preserving balance verification
-   * Circuit: circuits/rangeProof.circom
-   */
-  private async generateRangeProof(request: ZKProofRequest): Promise<ZKProofResponse> {
-    const { tokenId, actualAmount, minRange, maxRange } = request.inputs;
-
-    if (tokenId === undefined || actualAmount === undefined || minRange === undefined || maxRange === undefined) {
-      throw new APIError(400, 'tokenId, actualAmount, minRange, and maxRange are required for range proof');
-    }
-
-    if (actualAmount < minRange || actualAmount > maxRange) {
-      throw new APIError(400, 'actualAmount must be within [minRange, maxRange]');
-    }
-
-    // TODO: Implement SnarkJS proof generation
-    // 1. Load compiled circuit (rangeProof.wasm)
-    // 2. Load proving key (rangeProof_final.zkey)
-    // 3. Prepare witness inputs
-    // 4. Generate proof using snarkjs.groth16.fullProve()
-    // 5. Return proof and public signals
-
-    logger.warn('Range proof generation not yet implemented - returning mock proof');
-
-    // Mock response for now
-    return {
-      success: true,
-      proof: '0x' + 'mock_range_proof'.repeat(10),
-      publicSignals: [minRange.toString(), maxRange.toString()],
-    };
-  }
-
-  /**
-   * Verify a proof on-chain (calls ZKVerifier contract)
-   */
-  async verifyProofOnChain(
-    _proofType: 'eligibility' | 'range',
-    _proof: string,
-    _publicSignals: string[]
-  ): Promise<boolean> {
-    // TODO: Implement on-chain verification
-    logger.warn('On-chain proof verification not yet implemented');
-    return true;
+  } catch (error: any) {
+    logger.error('Failed to generate eligibility proof', error);
+    throw new APIError(500, `Proof generation failed: ${error.message}`);
   }
 }
 
-export const zkProver = new ZKProver();
+/**
+ * Generate range proof
+ * Proves that actualAmount ∈ [minRange, maxRange] without revealing actualAmount
+ * 
+ * @param actualAmount - The actual value (kept private)
+ * @param minRange - Minimum claimed range (public)
+ * @param maxRange - Maximum claimed range (public)
+ * @param commitment - Optional pre-computed commitment, will compute if not provided
+ * @returns Groth16 proof + public signals
+ */
+export async function generateRangeProof(
+  actualAmount: number,
+  minRange: number,
+  maxRange: number,
+  commitment?: string
+): Promise<ZKProofResponse> {
+  try {
+    logger.info(`Generating range proof: ${minRange} <= amount <= ${maxRange}`);
+
+    // Validate inputs
+    if (actualAmount < minRange || actualAmount > maxRange) {
+      throw new APIError(
+        400,
+        `Invalid range: actualAmount ${actualAmount} not in [${minRange}, ${maxRange}]`
+      );
+    }
+
+    if (minRange < 0 || maxRange < 0) {
+      throw new APIError(400, 'Range values must be non-negative');
+    }
+
+    // Load circuit
+    const circuit = await loadCircuit('rangeProof');
+
+    // Compute commitment to actualAmount if not provided
+    const computedCommitment = commitment || (await computeCommitment([actualAmount]));
+    logger.info(`Using commitment: ${computedCommitment}`);
+
+    // Prepare circuit inputs
+    const inputs = {
+      actualAmount: actualAmount.toString(),
+      minRange: minRange.toString(),
+      maxRange: maxRange.toString(),
+      commitment: computedCommitment,
+    };
+
+    logger.info('Generating witness...');
+
+    // Generate proof
+    const { proof, publicSignals } = await snarkjs.groth16.fullProve(
+      inputs,
+      circuit.wasm,
+      circuit.zkey
+    );
+
+    logger.info('Witness generated, creating proof...');
+
+    // Verify proof locally
+    const vkey = circuit.vkey;
+    const isValid = await snarkjs.groth16.verify(vkey, publicSignals, proof);
+
+    if (!isValid) {
+      throw new APIError(500, 'Generated proof failed verification');
+    }
+
+    logger.info('Range proof generated and verified successfully');
+
+    // Serialize proof
+    const proofCalldata = await snarkjs.groth16.exportSolidityCallData(proof, publicSignals);
+
+    return {
+      success: true,
+      proof: JSON.stringify(proof),
+      publicSignals: publicSignals.map((s: any) => s.toString()),
+      commitment: computedCommitment,
+      solidityCalldata: proofCalldata,
+    };
+  } catch (error: any) {
+    logger.error('Failed to generate range proof', error);
+    throw new APIError(500, `Proof generation failed: ${error.message}`);
+  }
+}
+
+/**
+ * Main proof generation handler
+ * Routes to appropriate proof generator based on proofType
+ */
+export async function generateProof(request: ZKProofRequest): Promise<ZKProofResponse> {
+  const { proofType, inputs } = request;
+
+  logger.info(`Proof generation requested: ${proofType}`);
+
+  switch (proofType) {
+    case 'eligibility':
+      if (!inputs.secret || !inputs.nullifier) {
+        throw new APIError(400, 'Missing required inputs: secret, nullifier');
+      }
+      return generateEligibilityProof(inputs.secret, inputs.nullifier);
+
+    case 'range':
+      if (
+        inputs.actualAmount === undefined ||
+        inputs.minRange === undefined ||
+        inputs.maxRange === undefined
+      ) {
+        throw new APIError(400, 'Missing required inputs: actualAmount, minRange, maxRange');
+      }
+      return generateRangeProof(
+        inputs.actualAmount,
+        inputs.minRange,
+        inputs.maxRange,
+        inputs.commitment
+      );
+
+    default:
+      throw new APIError(400, `Unknown proof type: ${proofType}`);
+  }
+}
+
+/**
+ * Utility: Check if circuits are compiled and ready
+ */
+export function areCircuitsReady(): boolean {
+  for (const [name, artifacts] of Object.entries(CIRCUITS)) {
+    if (!existsSync(artifacts.wasmPath) || !existsSync(artifacts.zkeyPath)) {
+      logger.warn(`Circuit not ready: ${name}`);
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Utility: Get circuit status
+ */
+export function getCircuitStatus() {
+  const status: Record<string, any> = {};
+  
+  for (const [name, artifacts] of Object.entries(CIRCUITS)) {
+    status[name] = {
+      wasm: existsSync(artifacts.wasmPath),
+      zkey: existsSync(artifacts.zkeyPath),
+      vkey: existsSync(artifacts.vkeyPath),
+      cached: !!circuitCache[name],
+    };
+  }
+  
+  return status;
+}
+
+// Export as object for backward compatibility
+export const zkProver = {
+  generateProof,
+  generateEligibilityProof,
+  generateRangeProof,
+  computeCommitment,
+  areCircuitsReady,
+  getCircuitStatus,
+};
+

@@ -36,8 +36,9 @@ export interface ZKProofRequest {
 }
 
 export interface ZKProofInputs {
-  commitment: string;
-  secret: string;
+  commitment?: string;
+  secret?: string;
+  nullifier?: string;
   // For range proofs
   tokenId?: number;
   actualAmount?: number;
@@ -47,8 +48,10 @@ export interface ZKProofInputs {
 
 export interface ZKProofResponse {
   success: boolean;
+  commitment?: string;
   proof?: string;
   publicSignals?: string[];
+  solidityCalldata?: string;
   error?: string;
 }
 
