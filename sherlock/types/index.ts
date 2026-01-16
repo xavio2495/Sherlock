@@ -92,5 +92,5 @@ export interface OraclePricesResponse {
 export interface APIError {
   message: string;
   code?: string;
-  details?: any;
+  details?: unknown;
 }
