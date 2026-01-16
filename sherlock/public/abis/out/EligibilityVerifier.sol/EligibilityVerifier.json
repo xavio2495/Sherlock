@@ -1,0 +1,81 @@
+{
+  "abi": [
+    {
+      "type": "function",
+      "name": "verifyProof",
+      "inputs": [
+        { "name": "_pA", "type": "uint256[2]", "internalType": "uint256[2]" },
+        { "name": "_pB", "type": "uint256[2][2]", "internalType": "uint256[2][2]" },
+        { "name": "_pC", "type": "uint256[2]", "internalType": "uint256[2]" },
+        { "name": "_pubSignals", "type": "uint256[1]", "internalType": "uint256[1]" }
+      ],
+      "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "view"
+    }
+  ],
+  "bytecode": {
+    "object": "0x608080604052346100165761044f908161001b8239f35b5f80fdfe60806040526004361015610011575f80fd5b5f3560e01c6343753b4d14610024575f80fd5b3461037057610120806003193601126103705761004036610374565b3660c4116103705761005136610381565b9036610124116103705761040060405261010435917f30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001831015610368576100e16020937f27efad12b381ca7736f23c709ee19ff35f5faffce1edd7642d18ea66bcbd2f5b6080527f01adec766cbedcd315a333a2a54534ade90b358b7a8b0a0fc96461410ab37bdf60a05261038f565b61010093828593358452847f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47910135810306905260443561014052606435610160526084356101805260a4356101a0527f2d4d9aa7e302d9df41749d5507949d05dbea33fbb16c643b22f599a2be6df2e26101c0527f14bedd503c37ceb061d8ec60209fe345ce89830a19230301f076caff004d19266101e0527f0967032fcbf776d1afc985f88877f182d38480a653f2decaa9794cbc3bf3060c610200527f0e187847ad4c798374d0d6732bf501847dd68bc0e071241e0213bc7fc13db7ab610220527f304cfbd1e08a704a99f5e847d93f8c3caafddec46b7a0d379da69a4d112346a7610240527f1739c1b1a457a8c7313123d24d2f9192f896b7c63eea05a9d57f06547ad0cec8610260526080516102805260a0516102a0527f198e9393920d483a7260bfb731fb5d25f1aa493335a9e71297e485b7aef312c26102c0527f1800deef121f1e76426a00665e5c4479674322d4f75edadd46debd5cd992f6ed6102e05282610300917f090689d0585ff075ec9e99ad690c3395bc4b313370b38ef355acdadcd122975b83527f12c85ea5db8c6deb4aab71808dcb408fe3d1e7690c43d37b4ce6cc0166fa7daa610320528035610340520135610360527f2591bc13f1f898a83cc03e7e607c2f201241877b52b64317236aefb65b27f195610380527f1100e66399194a16bd25690621133ca0ed9069b6c329b0486abbfa4beb5db4366103a0527f1a68c1ea5584f2c47e13b8d61a948e78ac5e4ceff807a6e7748f805e2bdf22c26103c0527f250d40fbf1f11c692b6afde1fdb9e65ed47d4bc5035b0a5b6180feabade00eca6103e0528160086107cf195a01fa9051165f5260205ff35b5f805260205ff35b5f80fd5b9060049160441161037057565b9060c4916101041161037057565b604051907f0fbbaaa4ee0f8745d295f6cda10b8692f5b569e28fb72ee006aa5170ddc1786f82527f1b2898fdfaed6add52c82153f37d35a4b34fe40a63644db30365ad1c30fe088e6020830152604082019081526107cf196040836060816007855a01fa156103685760409260066080939284938451905260a05160608401525a01fa156103685756fea26469706673582212204ede4ea988b21d6f26a43950ac309569303c01b8f0ca6f529cc55ba78469d86064736f6c63430008180033",
+    "sourceMap": "831:6237:31:-:0;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x60806040526004361015610011575f80fd5b5f3560e01c6343753b4d14610024575f80fd5b3461037057610120806003193601126103705761004036610374565b3660c4116103705761005136610381565b9036610124116103705761040060405261010435917f30644e72e131a029b85045b68181585d2833e84879b9709143e1f593f0000001831015610368576100e16020937f27efad12b381ca7736f23c709ee19ff35f5faffce1edd7642d18ea66bcbd2f5b6080527f01adec766cbedcd315a333a2a54534ade90b358b7a8b0a0fc96461410ab37bdf60a05261038f565b61010093828593358452847f30644e72e131a029b85045b68181585d97816a916871ca8d3c208c16d87cfd47910135810306905260443561014052606435610160526084356101805260a4356101a0527f2d4d9aa7e302d9df41749d5507949d05dbea33fbb16c643b22f599a2be6df2e26101c0527f14bedd503c37ceb061d8ec60209fe345ce89830a19230301f076caff004d19266101e0527f0967032fcbf776d1afc985f88877f182d38480a653f2decaa9794cbc3bf3060c610200527f0e187847ad4c798374d0d6732bf501847dd68bc0e071241e0213bc7fc13db7ab610220527f304cfbd1e08a704a99f5e847d93f8c3caafddec46b7a0d379da69a4d112346a7610240527f1739c1b1a457a8c7313123d24d2f9192f896b7c63eea05a9d57f06547ad0cec8610260526080516102805260a0516102a0527f198e9393920d483a7260bfb731fb5d25f1aa493335a9e71297e485b7aef312c26102c0527f1800deef121f1e76426a00665e5c4479674322d4f75edadd46debd5cd992f6ed6102e05282610300917f090689d0585ff075ec9e99ad690c3395bc4b313370b38ef355acdadcd122975b83527f12c85ea5db8c6deb4aab71808dcb408fe3d1e7690c43d37b4ce6cc0166fa7daa610320528035610340520135610360527f2591bc13f1f898a83cc03e7e607c2f201241877b52b64317236aefb65b27f195610380527f1100e66399194a16bd25690621133ca0ed9069b6c329b0486abbfa4beb5db4366103a0527f1a68c1ea5584f2c47e13b8d61a948e78ac5e4ceff807a6e7748f805e2bdf22c26103c0527f250d40fbf1f11c692b6afde1fdb9e65ed47d4bc5035b0a5b6180feabade00eca6103e0528160086107cf195a01fa9051165f5260205ff35b5f805260205ff35b5f80fd5b9060049160441161037057565b9060c4916101041161037057565b604051907f0fbbaaa4ee0f8745d295f6cda10b8692f5b569e28fb72ee006aa5170ddc1786f82527f1b2898fdfaed6add52c82153f37d35a4b34fe40a63644db30365ad1c30fe088e6020830152604082019081526107cf196040836060816007855a01fa156103685760409260066080939284938451905260a05160608401525a01fa156103685756fea26469706673582212204ede4ea988b21d6f26a43950ac309569303c01b8f0ca6f529cc55ba78469d86064736f6c63430008180033",
+    "sourceMap": "831:6237:31:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;:::i;:::-;;;;;;;3413:3645;831:6237;3413:3645;831:6237;3413:3645;;;;;;;;;831:6237;3413:3645;;831:6237;3413:3645;;;;;:::i;:::-;831:6237;3413:3645;;;;;;;;;;;;;;;;;831:6237;3413:3645;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;831:6237;3413:3645;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;831:6237;3413:3645;831:6237;;3413:3645;;831:6237;3413:3645;;831:6237;;3413:3645;831:6237;;;;;;;;;;;;:::o;:::-;;;;;;;;:::o;3413:3645::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;831:6237;3413:3645;;;;;;;;;;;;;;;;;;;;:::o",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "verifyProof(uint256[2],uint256[2][2],uint256[2],uint256[1])": "43753b4d"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256[2]\",\"name\":\"_pA\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[2][2]\",\"name\":\"_pB\",\"type\":\"uint256[2][2]\"},{\"internalType\":\"uint256[2]\",\"name\":\"_pC\",\"type\":\"uint256[2]\"},{\"internalType\":\"uint256[1]\",\"name\":\"_pubSignals\",\"type\":\"uint256[1]\"}],\"name\":\"verifyProof\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/EligibilityVerifier.sol\":\"EligibilityVerifier\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/\",\":@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/\",\":erc4626-tests/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/erc4626-tests/\",\":forge-std/=../lib/openzeppelin-contracts/lib/forge-std/src/\",\":halmos-cheatcodes/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/\",\":openzeppelin-contracts/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/contracts/\",\":pyth-sdk-solidity/=lib/pyth-sdk-solidity/\"],\"viaIR\":true},\"sources\":{\"src/EligibilityVerifier.sol\":{\"keccak256\":\"0xbcd01ecf9134e17dbac57d76583eaec3bbc52055e0103fb5476a4c5ec6edd98c\",\"license\":\"GPL-3.0\",\"urls\":[\"bzz-raw://04aefc0b1d78e4d1562ff701f02608c531f68ba5796cf35fef8402ce38ccbc21\",\"dweb:/ipfs/QmexZqE6Rh8tGSYam5t9FXJvkRLtBS7UWFvLZgmgmceLzF\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": { "version": "0.8.24+commit.e11b9ed9" },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            { "internalType": "uint256[2]", "name": "_pA", "type": "uint256[2]" },
+            { "internalType": "uint256[2][2]", "name": "_pB", "type": "uint256[2][2]" },
+            { "internalType": "uint256[2]", "name": "_pC", "type": "uint256[2]" },
+            { "internalType": "uint256[1]", "name": "_pubSignals", "type": "uint256[1]" }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "verifyProof",
+          "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }]
+        }
+      ],
+      "devdoc": { "kind": "dev", "methods": {}, "version": 1 },
+      "userdoc": { "kind": "user", "methods": {}, "version": 1 }
+    },
+    "settings": {
+      "remappings": [
+        "@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/",
+        "@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/",
+        "erc4626-tests/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/erc4626-tests/",
+        "forge-std/=../lib/openzeppelin-contracts/lib/forge-std/src/",
+        "halmos-cheatcodes/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+        "openzeppelin-contracts/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/contracts/",
+        "pyth-sdk-solidity/=lib/pyth-sdk-solidity/"
+      ],
+      "optimizer": { "enabled": true, "runs": 200 },
+      "metadata": { "bytecodeHash": "ipfs" },
+      "compilationTarget": { "src/EligibilityVerifier.sol": "EligibilityVerifier" },
+      "evmVersion": "cancun",
+      "libraries": {},
+      "viaIR": true
+    },
+    "sources": {
+      "src/EligibilityVerifier.sol": {
+        "keccak256": "0xbcd01ecf9134e17dbac57d76583eaec3bbc52055e0103fb5476a4c5ec6edd98c",
+        "urls": [
+          "bzz-raw://04aefc0b1d78e4d1562ff701f02608c531f68ba5796cf35fef8402ce38ccbc21",
+          "dweb:/ipfs/QmexZqE6Rh8tGSYam5t9FXJvkRLtBS7UWFvLZgmgmceLzF"
+        ],
+        "license": "GPL-3.0"
+      }
+    },
+    "version": 1
+  },
+  "id": 31
+}

@@ -1,0 +1,622 @@
+{
+  "abi": [
+    { "type": "constructor", "inputs": [], "stateMutability": "nonpayable" },
+    {
+      "type": "function",
+      "name": "batchRegisterCommitments",
+      "inputs": [
+        { "name": "users", "type": "address[]", "internalType": "address[]" },
+        { "name": "commitments", "type": "bytes32[]", "internalType": "bytes32[]" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getCommitment",
+      "inputs": [{ "name": "user", "type": "address", "internalType": "address" }],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct ZKVerifier.Commitment",
+          "components": [
+            { "name": "commitmentHash", "type": "bytes32", "internalType": "bytes32" },
+            { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
+            { "name": "isActive", "type": "bool", "internalType": "bool" }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "hasActiveCommitment",
+      "inputs": [{ "name": "user", "type": "address", "internalType": "address" }],
+      "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "rangeCommitments",
+      "inputs": [
+        { "name": "", "type": "uint256", "internalType": "uint256" },
+        { "name": "", "type": "address", "internalType": "address" }
+      ],
+      "outputs": [{ "name": "", "type": "bytes32", "internalType": "bytes32" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "registerCommitment",
+      "inputs": [{ "name": "commitment", "type": "bytes32", "internalType": "bytes32" }],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "renounceOwnership",
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "revokeCommitment",
+      "inputs": [{ "name": "user", "type": "address", "internalType": "address" }],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "setRangeCommitment",
+      "inputs": [
+        { "name": "tokenId", "type": "uint256", "internalType": "uint256" },
+        { "name": "holder", "type": "address", "internalType": "address" },
+        { "name": "commitment", "type": "bytes32", "internalType": "bytes32" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "tokenHolderVerified",
+      "inputs": [
+        { "name": "", "type": "uint256", "internalType": "uint256" },
+        { "name": "", "type": "address", "internalType": "address" }
+      ],
+      "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [{ "name": "newOwner", "type": "address", "internalType": "address" }],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "updateHolderVerification",
+      "inputs": [
+        { "name": "tokenId", "type": "uint256", "internalType": "uint256" },
+        { "name": "holder", "type": "address", "internalType": "address" },
+        { "name": "isVerified", "type": "bool", "internalType": "bool" }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "userCommitments",
+      "inputs": [{ "name": "", "type": "address", "internalType": "address" }],
+      "outputs": [
+        { "name": "commitmentHash", "type": "bytes32", "internalType": "bytes32" },
+        { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
+        { "name": "isActive", "type": "bool", "internalType": "bool" }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "verifyEligibility",
+      "inputs": [
+        { "name": "user", "type": "address", "internalType": "address" },
+        { "name": "commitment", "type": "bytes32", "internalType": "bytes32" },
+        { "name": "proof", "type": "bytes", "internalType": "bytes" }
+      ],
+      "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "verifyRangeProof",
+      "inputs": [
+        { "name": "tokenId", "type": "uint256", "internalType": "uint256" },
+        { "name": "holder", "type": "address", "internalType": "address" },
+        { "name": "minRange", "type": "uint256", "internalType": "uint256" },
+        { "name": "maxRange", "type": "uint256", "internalType": "uint256" },
+        { "name": "proof", "type": "bytes", "internalType": "bytes" }
+      ],
+      "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "event",
+      "name": "CommitmentRegistered",
+      "inputs": [
+        { "name": "user", "type": "address", "indexed": true, "internalType": "address" },
+        { "name": "commitment", "type": "bytes32", "indexed": false, "internalType": "bytes32" },
+        { "name": "timestamp", "type": "uint256", "indexed": false, "internalType": "uint256" }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "CommitmentRevoked",
+      "inputs": [{ "name": "user", "type": "address", "indexed": true, "internalType": "address" }],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "EligibilityVerified",
+      "inputs": [
+        { "name": "user", "type": "address", "indexed": true, "internalType": "address" },
+        { "name": "isEligible", "type": "bool", "indexed": false, "internalType": "bool" }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        { "name": "previousOwner", "type": "address", "indexed": true, "internalType": "address" },
+        { "name": "newOwner", "type": "address", "indexed": true, "internalType": "address" }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "RangeCommitmentSet",
+      "inputs": [
+        { "name": "tokenId", "type": "uint256", "indexed": true, "internalType": "uint256" },
+        { "name": "holder", "type": "address", "indexed": true, "internalType": "address" },
+        { "name": "commitment", "type": "bytes32", "indexed": false, "internalType": "bytes32" }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "RangeProofVerified",
+      "inputs": [
+        { "name": "tokenId", "type": "uint256", "indexed": true, "internalType": "uint256" },
+        { "name": "holder", "type": "address", "indexed": true, "internalType": "address" },
+        { "name": "isValid", "type": "bool", "indexed": false, "internalType": "bool" }
+      ],
+      "anonymous": false
+    },
+    { "type": "error", "name": "CommitmentAlreadyExists", "inputs": [] },
+    { "type": "error", "name": "CommitmentMismatch", "inputs": [] },
+    { "type": "error", "name": "InvalidProof", "inputs": [] },
+    { "type": "error", "name": "InvalidRange", "inputs": [] },
+    { "type": "error", "name": "NoActiveCommitment", "inputs": [] },
+    {
+      "type": "error",
+      "name": "OwnableInvalidOwner",
+      "inputs": [{ "name": "owner", "type": "address", "internalType": "address" }]
+    },
+    {
+      "type": "error",
+      "name": "OwnableUnauthorizedAccount",
+      "inputs": [{ "name": "account", "type": "address", "internalType": "address" }]
+    },
+    { "type": "error", "name": "ZeroCommitment", "inputs": [] }
+  ],
+  "bytecode": {
+    "object": "0x60808060405234610078573315610063575f8054336001600160a01b03198216811783556040519290916001600160a01b0316907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a3610c62908161007d8239f35b631e4fbdf760e01b81525f6004820152602490fd5b5f80fdfe60806040526004361015610011575f80fd5b5f3560e01c80630f45dcfd146101045780632907c1f7146100ff5780635b6ef032146100fa5780635c50aa22146100f5578063715018a6146100f0578063718d8113146100eb5780638da5cb5b146100e6578063a40bbbd2146100e1578063cb16644d146100dc578063cce613d6146100d7578063d9e314d8146100d2578063f2fde38b146100cd578063f62b6f0e146100c8578063f8c0d823146100c35763fa1026dd146100be575f80fd5b610920565b6108ce565b610838565b6107aa565b6106eb565b61067d565b610587565b61053a565b610513565b6104bf565b610468565b610425565b6103ce565b610377565b61013e565b9181601f8401121561013a5782359167ffffffffffffffff831161013a576020808501948460051b01011161013a57565b5f80fd5b3461013a5760408060031936011261013a5767ffffffffffffffff60043581811161013a57610171903690600401610109565b92909160243590811161013a5761018c903690600401610109565b9092610196610c01565b6101a18286146109c0565b5f5b8581106101ac57005b806101ba60019285886109fe565b35156102a5576101fc60026101f46101db6101d6858c896109fe565b610a22565b6001600160a01b03165f90815260016020526040902090565b015460ff1690565b6102a55761023c61020e8286896109fe565b35610217610312565b9081524260208201526001878201526102376101db6101d6858c896109fe565b610a2f565b61024a6101d68289866109fe565b7ff94c35d8303d50dad386cbf59defef96279412f23e6ef7668e6987a3e13a974161029b61027984888b6109fe565b88519035815242602082015260a086901b869003909316929081906040820190565b0390a25b016101a3565b61029f565b6001600160a01b0381160361013a57565b634e487b7160e01b5f52604160045260245ffd5b6060810190811067ffffffffffffffff8211176102eb57604052565b6102bb565b90601f8019910116810190811067ffffffffffffffff8211176102eb57604052565b6040519061031f826102cf565b565b81601f8201121561013a5780359067ffffffffffffffff82116102eb5760405192610356601f8401601f1916602001856102f0565b8284526020838301011161013a57815f926020809301838601378301015290565b3461013a57606036600319011261013a57600435610394816102aa565b60443567ffffffffffffffff811161013a576020916103ba6103c4923690600401610321565b9060243590610a5c565b6040519015158152f35b3461013a57602036600319011261013a576004356103eb816102aa565b60018060a01b03165f526001602052606060405f2080549060ff600260018301549201541690604051928352602083015215156040820152f35b3461013a57602036600319011261013a57600435610442816102aa565b60018060a01b03165f526001602052602060ff600260405f200154166040519015158152f35b3461013a575f36600319011261013a57610480610c01565b5f80546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b3461013a5760a036600319011261013a576024356104dc816102aa565b60843567ffffffffffffffff811161013a576020916105026103c4923690600401610321565b906064359060443590600435610ac6565b3461013a575f36600319011261013a575f546040516001600160a01b039091168152602090f35b3461013a57604036600319011261013a57602061057e60243561055c816102aa565b6004355f526003835260405f209060018060a01b03165f5260205260405f2090565b54604051908152f35b3461013a57606036600319011261013a576024356004356105a7826102aa565b6001600160a01b038281169260443591338514908115610670575b501561063a578180610624610635936105fd7f885d4d1b37ab3ae93fea06e6f8a3d174580b49726ce3aff481b2c4c4252a9f44961515610bc3565b61060f875f52600360205260405f2090565b9060018060a01b03165f5260205260405f2090565b556040519081529081906020820190565b0390a3005b60405162461bcd60e51b815260206004820152600e60248201526d139bdd08185d5d1a1bdc9a5e995960921b6044820152606490fd5b90505f541633145f6105c2565b3461013a57606036600319011261013a5760243561069a816102aa565b604435801515810361013a576106d86106e9926106b5610c01565b6004355f52600260205260405f209060018060a01b03165f5260205260405f2090565b9060ff801983541691151516179055565b005b3461013a57602036600319011261013a57600435801561079857335f90815260016020526040902061071f906002906101f4565b6107865761075161072e610312565b82815242602082015260016040820152335f908152600160205260409020610a2f565b6040805191825242602083015233917ff94c35d8303d50dad386cbf59defef96279412f23e6ef7668e6987a3e13a97419190a2005b60405163145718a760e01b8152600490fd5b6040516351bda03d60e01b8152600490fd5b3461013a57602036600319011261013a576004356107c7816102aa565b6107cf610c01565b6001600160a01b03908116908115610820575f54826bffffffffffffffffffffffff60a01b8216175f55167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e05f80a3005b604051631e4fbdf760e01b81525f6004820152602490fd5b3461013a57602036600319011261013a57600435610855816102aa565b61085d610c01565b6001600160a01b03165f8181526001602052604090206002015460ff16156108bc57805f526001602052600260405f200160ff1981541690557f963eaa1310a95b879edd6190c81702bcbbfa814698155ebb751b2d4e85cd2e695f80a2005b604051638fda9af160e01b8152600490fd5b3461013a57604036600319011261013a57602060ff6109146024356108f2816102aa565b6004355f526002845260405f209060018060a01b03165f5260205260405f2090565b54166040519015158152f35b3461013a57602036600319011261013a576109bc600435610940816102aa565b6040905f828051610950816102cf565b828152826020820152015260018060a01b03165f526001602052805f209060ff600282519361097e856102cf565b805485526001810154602086015201541615158183015251918291829190916040806060830194805184526020810151602085015201511515910152565b0390f35b156109c757565b60405162461bcd60e51b815260206004820152600f60248201526e098cadccee8d040dad2e6dac2e8c6d608b1b6044820152606490fd5b9190811015610a0e5760051b0190565b634e487b7160e01b5f52603260045260245ffd5b35610a2c816102aa565b90565b6002604061031f9380518455602081015160018501550151151591019060ff801983541691151516179055565b91909160018060a01b03165f52600160205260405f20604051610a7e816102cf565b60ff600283549384845260018101546020850152015416159060408215910152610ab9578203610ac0578051908115610ab957602001201490565b5050505f90565b50505f90565b9392909192818411610bb057610af8610af460026101f48660018060a01b03165f52600160205260405f2090565b1590565b610bb05780518015610bb957602011610bb05760200151928310908115610ba6575b50610ab95761060f610b8092604051610b6e81610b606020820194878a87916054939183526bffffffffffffffffffffffff199060601b16602083015260348201520190565b03601f1981018352826102f0565b519020935f52600360205260405f2090565b54908115918215610b9b575b5050610b9757600190565b5f90565b141590505f80610b8c565b905082115f610b1a565b50505050505f90565b5050505050505f90565b15610bca57565b60405162461bcd60e51b815260206004820152600f60248201526e16995c9bc818dbdb5b5a5d1b595b9d608a1b6044820152606490fd5b5f546001600160a01b03163303610c1457565b60405163118cdaa760e01b8152336004820152602490fdfea26469706673582212203c3b87e8c9b72c390ce8b2fd3c2efe19e8bfc442df987f528756c7ac3a58708364736f6c63430008180033",
+    "sourceMap": "807:10135:80:-:0;;;;;;;2030:10;1273:26:0;1269:95;;1297:1;807:10135:80;;2030:10;-1:-1:-1;;;;;;807:10135:80;;;;;;;;;2030:10;;-1:-1:-1;;;;;807:10135:80;;3052:40:0;;1297:1;3052:40;807:10135:80;;;;;;;1269:95:0;-1:-1:-1;;;1322:31:0;;1297:1;1322:31;;;807:10135:80;;;1322:31:0;807:10135:80;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x60806040526004361015610011575f80fd5b5f3560e01c80630f45dcfd146101045780632907c1f7146100ff5780635b6ef032146100fa5780635c50aa22146100f5578063715018a6146100f0578063718d8113146100eb5780638da5cb5b146100e6578063a40bbbd2146100e1578063cb16644d146100dc578063cce613d6146100d7578063d9e314d8146100d2578063f2fde38b146100cd578063f62b6f0e146100c8578063f8c0d823146100c35763fa1026dd146100be575f80fd5b610920565b6108ce565b610838565b6107aa565b6106eb565b61067d565b610587565b61053a565b610513565b6104bf565b610468565b610425565b6103ce565b610377565b61013e565b9181601f8401121561013a5782359167ffffffffffffffff831161013a576020808501948460051b01011161013a57565b5f80fd5b3461013a5760408060031936011261013a5767ffffffffffffffff60043581811161013a57610171903690600401610109565b92909160243590811161013a5761018c903690600401610109565b9092610196610c01565b6101a18286146109c0565b5f5b8581106101ac57005b806101ba60019285886109fe565b35156102a5576101fc60026101f46101db6101d6858c896109fe565b610a22565b6001600160a01b03165f90815260016020526040902090565b015460ff1690565b6102a55761023c61020e8286896109fe565b35610217610312565b9081524260208201526001878201526102376101db6101d6858c896109fe565b610a2f565b61024a6101d68289866109fe565b7ff94c35d8303d50dad386cbf59defef96279412f23e6ef7668e6987a3e13a974161029b61027984888b6109fe565b88519035815242602082015260a086901b869003909316929081906040820190565b0390a25b016101a3565b61029f565b6001600160a01b0381160361013a57565b634e487b7160e01b5f52604160045260245ffd5b6060810190811067ffffffffffffffff8211176102eb57604052565b6102bb565b90601f8019910116810190811067ffffffffffffffff8211176102eb57604052565b6040519061031f826102cf565b565b81601f8201121561013a5780359067ffffffffffffffff82116102eb5760405192610356601f8401601f1916602001856102f0565b8284526020838301011161013a57815f926020809301838601378301015290565b3461013a57606036600319011261013a57600435610394816102aa565b60443567ffffffffffffffff811161013a576020916103ba6103c4923690600401610321565b9060243590610a5c565b6040519015158152f35b3461013a57602036600319011261013a576004356103eb816102aa565b60018060a01b03165f526001602052606060405f2080549060ff600260018301549201541690604051928352602083015215156040820152f35b3461013a57602036600319011261013a57600435610442816102aa565b60018060a01b03165f526001602052602060ff600260405f200154166040519015158152f35b3461013a575f36600319011261013a57610480610c01565b5f80546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b3461013a5760a036600319011261013a576024356104dc816102aa565b60843567ffffffffffffffff811161013a576020916105026103c4923690600401610321565b906064359060443590600435610ac6565b3461013a575f36600319011261013a575f546040516001600160a01b039091168152602090f35b3461013a57604036600319011261013a57602061057e60243561055c816102aa565b6004355f526003835260405f209060018060a01b03165f5260205260405f2090565b54604051908152f35b3461013a57606036600319011261013a576024356004356105a7826102aa565b6001600160a01b038281169260443591338514908115610670575b501561063a578180610624610635936105fd7f885d4d1b37ab3ae93fea06e6f8a3d174580b49726ce3aff481b2c4c4252a9f44961515610bc3565b61060f875f52600360205260405f2090565b9060018060a01b03165f5260205260405f2090565b556040519081529081906020820190565b0390a3005b60405162461bcd60e51b815260206004820152600e60248201526d139bdd08185d5d1a1bdc9a5e995960921b6044820152606490fd5b90505f541633145f6105c2565b3461013a57606036600319011261013a5760243561069a816102aa565b604435801515810361013a576106d86106e9926106b5610c01565b6004355f52600260205260405f209060018060a01b03165f5260205260405f2090565b9060ff801983541691151516179055565b005b3461013a57602036600319011261013a57600435801561079857335f90815260016020526040902061071f906002906101f4565b6107865761075161072e610312565b82815242602082015260016040820152335f908152600160205260409020610a2f565b6040805191825242602083015233917ff94c35d8303d50dad386cbf59defef96279412f23e6ef7668e6987a3e13a97419190a2005b60405163145718a760e01b8152600490fd5b6040516351bda03d60e01b8152600490fd5b3461013a57602036600319011261013a576004356107c7816102aa565b6107cf610c01565b6001600160a01b03908116908115610820575f54826bffffffffffffffffffffffff60a01b8216175f55167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e05f80a3005b604051631e4fbdf760e01b81525f6004820152602490fd5b3461013a57602036600319011261013a57600435610855816102aa565b61085d610c01565b6001600160a01b03165f8181526001602052604090206002015460ff16156108bc57805f526001602052600260405f200160ff1981541690557f963eaa1310a95b879edd6190c81702bcbbfa814698155ebb751b2d4e85cd2e695f80a2005b604051638fda9af160e01b8152600490fd5b3461013a57604036600319011261013a57602060ff6109146024356108f2816102aa565b6004355f526002845260405f209060018060a01b03165f5260205260405f2090565b54166040519015158152f35b3461013a57602036600319011261013a576109bc600435610940816102aa565b6040905f828051610950816102cf565b828152826020820152015260018060a01b03165f526001602052805f209060ff600282519361097e856102cf565b805485526001810154602086015201541615158183015251918291829190916040806060830194805184526020810151602085015201511515910152565b0390f35b156109c757565b60405162461bcd60e51b815260206004820152600f60248201526e098cadccee8d040dad2e6dac2e8c6d608b1b6044820152606490fd5b9190811015610a0e5760051b0190565b634e487b7160e01b5f52603260045260245ffd5b35610a2c816102aa565b90565b6002604061031f9380518455602081015160018501550151151591019060ff801983541691151516179055565b91909160018060a01b03165f52600160205260405f20604051610a7e816102cf565b60ff600283549384845260018101546020850152015416159060408215910152610ab9578203610ac0578051908115610ab957602001201490565b5050505f90565b50505f90565b9392909192818411610bb057610af8610af460026101f48660018060a01b03165f52600160205260405f2090565b1590565b610bb05780518015610bb957602011610bb05760200151928310908115610ba6575b50610ab95761060f610b8092604051610b6e81610b606020820194878a87916054939183526bffffffffffffffffffffffff199060601b16602083015260348201520190565b03601f1981018352826102f0565b519020935f52600360205260405f2090565b54908115918215610b9b575b5050610b9757600190565b5f90565b141590505f80610b8c565b905082115f610b1a565b50505050505f90565b5050505050505f90565b15610bca57565b60405162461bcd60e51b815260206004820152600f60248201526e16995c9bc818dbdb5b5a5d1b595b9d608a1b6044820152606490fd5b5f546001600160a01b03163303610c1457565b60405163118cdaa760e01b8152336004820152602490fdfea26469706673582212203c3b87e8c9b72c390ce8b2fd3c2efe19e8bfc442df987f528756c7ac3a58708364736f6c63430008180033",
+    "sourceMap": "807:10135:80:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;:::i;:::-;1500:62:0;;;;:::i;:::-;9508::80;9516:34;;;9508:62;:::i;:::-;-1:-1:-1;9609:16:80;;;;;;807:10135;9627:3;9650:14;;807:10135;9650:14;;;;:::i;:::-;807:10135;9650:28;9646:42;;9706:34;;:25;9722:8;;;;;;:::i;:::-;;:::i;:::-;-1:-1:-1;;;;;807:10135:80;;;;;;;;;;;;;9706:25;:34;807:10135;;;;;9706:34;9702:48;;807:10135;9850:14;;;;;:::i;:::-;807:10135;;;:::i;:::-;;;;9893:15;807:10135;9805:150;;807:10135;9706:15;9805:150;;;807:10135;9777:25;9793:8;;;;;;:::i;9777:25::-;807:10135;:::i;:::-;10008:8;;;;;;:::i;:::-;9987:63;;10018:14;;;;;:::i;:::-;807:10135;;;;;;9893:15;807:10135;;;;;;;;;;;;;;;;;;;;;;;9987:63;;;;9594:13;807:10135;9594:13;;9702:48;9742:8;;807:10135;-1:-1:-1;;;;;807:10135:80;;;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;:::i;:::-;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;807:10135:80;;;;;:::i;:::-;;;;;;;;;;;;;-1:-1:-1;807:10135:80;;;;;;;;;;;;;;:::o;:::-;;;;;;-1:-1:-1;;807:10135:80;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;:::i;:::-;;;;;;;;;;;;;;;-1:-1:-1;;807:10135:80;;;;;;;;;:::i;:::-;;;;;;;-1:-1:-1;807:10135:80;1011:53;807:10135;;;;-1:-1:-1;807:10135:80;;;1011:53;807:10135;1011:53;;;;807:10135;1011:53;;807:10135;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;807:10135:80;;;;;;;;;:::i;:::-;;;;;;;-1:-1:-1;807:10135:80;7943:15;807:10135;;;;7943:30;807:10135;-1:-1:-1;807:10135:80;7943:30;807:10135;;;;;;;;;;;;;;;;-1:-1:-1;;807:10135:80;;;;1500:62:0;;:::i;:::-;807:10135:80;;;-1:-1:-1;;;;;;807:10135:80;;;;-1:-1:-1;;;;;807:10135:80;3052:40:0;807:10135:80;;3052:40:0;807:10135:80;;;;;;;-1:-1:-1;;807:10135:80;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;:::i;:::-;;;;;;-1:-1:-1;;807:10135:80;;;;;;;;-1:-1:-1;;;;;807:10135:80;;;;;;;;;;;;;;-1:-1:-1;;807:10135:80;;;;;1201:71;807:10135;;;;;:::i;:::-;;;-1:-1:-1;807:10135:80;1201:71;807:10135;;;-1:-1:-1;807:10135:80;;;;;;;;;;;;;;;;;1201:71;807:10135;;;;;;;;;;;;;-1:-1:-1;;807:10135:80;;;;;;;;;;;:::i;:::-;-1:-1:-1;;;;;807:10135:80;;;;;;;7425:10;:20;;;:45;;;;807:10135;;;;;7507:24;;7570:33;7631:47;7507:24;7499:52;7631:47;7507:24;;;7499:52;:::i;:::-;7570:25;;807:10135;;7570:16;807:10135;;;;;;;7570:25;807:10135;;;;;;;;;;;;;;;;7570:33;807:10135;;;;;;;;;;;;;;7631:47;;;;807:10135;;;;-1:-1:-1;;;807:10135:80;;;;;;;;;;;;-1:-1:-1;;;807:10135:80;;;;;;;7425:45;807:10135;;-1:-1:-1;807:10135:80;;7425:10;7449:21;7425:45;;;807:10135;;;;;;-1:-1:-1;;807:10135:80;;;;;;;;;:::i;:::-;;;;;;;;;;9083:36;:49;1500:62:0;;;:::i;:::-;807:10135:80;;-1:-1:-1;807:10135:80;9083:19;807:10135;;;-1:-1:-1;807:10135:80;;;;;;;;;;;;;;;;;9083:36;807:10135;;;;;;;;;;;;;;;9083:49;807:10135;;;;;;;-1:-1:-1;;807:10135:80;;;;;;2444:24;;2440:53;;2523:10;807:10135;;;;;;;;;;2507:36;;;;:27;807:10135;2507:36;2503:74;;807:10135;;;:::i;:::-;;;;2702:15;807:10135;2626:130;;807:10135;9706:15;2626:130;;;807:10135;2523:10;807:10135;;;;;;;;;;;:::i;:::-;2626:130;807:10135;;;;;2702:15;807:10135;;;;2523:10;;2772:61;;2626:130;2772:61;807:10135;2503:74;807:10135;;-1:-1:-1;;;2552:25:80;;807:10135;;2552:25;2440:53;807:10135;;-1:-1:-1;;;2477:16:80;;807:10135;;2477:16;807:10135;;;;;;-1:-1:-1;;807:10135:80;;;;;;;;;:::i;:::-;1500:62:0;;:::i;:::-;-1:-1:-1;;;;;807:10135:80;;;;2627:22:0;;2623:91;;3004:6;807:10135:80;;;;;;;;3004:6:0;807:10135:80;;3052:40:0;3004:6;3052:40;;807:10135:80;2623:91:0;807:10135:80;;-1:-1:-1;;;2672:31:0;;-1:-1:-1;807:10135:80;2672:31:0;;807:10135:80;;;2672:31:0;807:10135:80;;;;;;-1:-1:-1;;807:10135:80;;;;;;;;;:::i;:::-;1500:62:0;;:::i;:::-;-1:-1:-1;;;;;807:10135:80;-1:-1:-1;807:10135:80;;;;;;;;;8518:30;;807:10135;;;8517:31;8513:64;;807:10135;-1:-1:-1;807:10135:80;8518:15;807:10135;;8518:30;807:10135;-1:-1:-1;807:10135:80;8596:30;807:10135;;;;;;;8649:23;-1:-1:-1;8649:23:80;;807:10135;8513:64;807:10135;;-1:-1:-1;;;8557:20:80;;807:10135;;8557:20;807:10135;;;;;;-1:-1:-1;;807:10135:80;;;;;;1070:71;807:10135;;;;;:::i;:::-;;;-1:-1:-1;807:10135:80;1070:71;807:10135;;;-1:-1:-1;807:10135:80;;;;;;;;;;;;;;;;;1070:71;807:10135;;;;;;;;;;;;;;;;-1:-1:-1;;807:10135:80;;;;;;;;;;:::i;:::-;;;-1:-1:-1;807:10135:80;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;-1:-1:-1;807:10135:80;8231:15;807:10135;;;-1:-1:-1;807:10135:80;;;;;;;;;;:::i;:::-;;;;;8231:15;807:10135;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;-1:-1:-1;;;807:10135:80;;;;;;;;;;;;-1:-1:-1;;;807:10135:80;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;;;;;;:::i;:::-;;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;3308:966;;;;807:10135;;;;;;-1:-1:-1;807:10135:80;3539:15;807:10135;;;-1:-1:-1;807:10135:80;;;;;;:::i;:::-;;;;;;;;;3539:15;807:10135;;;;;;;;;;;;;;;;;;3570:63;;3688:39;;3684:82;;807:10135;;3935:17;;;3931:60;;807:10135;;4030:16;4071:32;3308:966;:::o;3931:60::-;3968:12;;;-1:-1:-1;3968:12:80;:::o;3684:82::-;3743:12;;-1:-1:-1;3743:12:80;:::o;5169:1822::-;;;;;;5410:19;;;5406:62;;5531:33;5532:32;;:23;;807:10135;;;;;;;;9706:15;807:10135;;;;;;;5532:32;5531:33;;807:10135;5531:33;5527:76;;807:10135;;6059:17;;6055:60;;6280:2;-1:-1:-1;6261:60:80;;6280:2;6369:70;;6522:23;;;:50;;;;;5169:1822;6518:93;;;6796:25;:33;807:10135;;;6711:47;;;6280:2;6711:47;;;;;;807:10135;;;;;;;;;;;;;;;;;;;;;;;6711:47;;807:10135;;6711:47;;;;;;:::i;:::-;807:10135;6701:58;;6796:25;807:10135;;7570:16;807:10135;;;;;;;6796:33;807:10135;6852:30;;;:72;;;;;5169:1822;6848:115;;;;5532:15;5169:1822;:::o;6848:115::-;6075:1;6940:12;:::o;6852:72::-;6886:38;;;-1:-1:-1;6852:72:80;;;;6522:50;6549:23;;;;6522:50;;;6261:60;6298:12;;;;;6075:1;6298:12;:::o;6055:60::-;6092:12;;;;;;6075:1;6092:12;:::o;807:10135::-;;;;:::o;:::-;;;-1:-1:-1;;;807:10135:80;;;;;;;;;;;;-1:-1:-1;;;807:10135:80;;;;;;;1796:162:0;1710:6;807:10135:80;-1:-1:-1;;;;;807:10135:80;735:10:9;1855:23:0;1851:101;;1796:162::o;1851:101::-;807:10135:80;;-1:-1:-1;;;1901:40:0;;735:10:9;1901:40:0;;;807:10135:80;;;1901:40:0",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "batchRegisterCommitments(address[],bytes32[])": "0f45dcfd",
+    "getCommitment(address)": "fa1026dd",
+    "hasActiveCommitment(address)": "5c50aa22",
+    "owner()": "8da5cb5b",
+    "rangeCommitments(uint256,address)": "a40bbbd2",
+    "registerCommitment(bytes32)": "d9e314d8",
+    "renounceOwnership()": "715018a6",
+    "revokeCommitment(address)": "f62b6f0e",
+    "setRangeCommitment(uint256,address,bytes32)": "cb16644d",
+    "tokenHolderVerified(uint256,address)": "f8c0d823",
+    "transferOwnership(address)": "f2fde38b",
+    "updateHolderVerification(uint256,address,bool)": "cce613d6",
+    "userCommitments(address)": "5b6ef032",
+    "verifyEligibility(address,bytes32,bytes)": "2907c1f7",
+    "verifyRangeProof(uint256,address,uint256,uint256,bytes)": "718d8113"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"CommitmentAlreadyExists\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"CommitmentMismatch\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidProof\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidRange\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NoActiveCommitment\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ZeroCommitment\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"CommitmentRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"CommitmentRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"isEligible\",\"type\":\"bool\"}],\"name\":\"EligibilityVerified\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"}],\"name\":\"RangeCommitmentSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"isValid\",\"type\":\"bool\"}],\"name\":\"RangeProofVerified\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"users\",\"type\":\"address[]\"},{\"internalType\":\"bytes32[]\",\"name\":\"commitments\",\"type\":\"bytes32[]\"}],\"name\":\"batchRegisterCommitments\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getCommitment\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"commitmentHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"isActive\",\"type\":\"bool\"}],\"internalType\":\"struct ZKVerifier.Commitment\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"hasActiveCommitment\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"rangeCommitments\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"}],\"name\":\"registerCommitment\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"revokeCommitment\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"}],\"name\":\"setRangeCommitment\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"tokenHolderVerified\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"isVerified\",\"type\":\"bool\"}],\"name\":\"updateHolderVerification\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"userCommitments\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"commitmentHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"isActive\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"commitment\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"verifyEligibility\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"holder\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"minRange\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxRange\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"verifyRangeProof\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"MVP implementation uses simple commitment-based verification      Future upgrade path to Groth16 verifier  MVP Commitment Scheme: - Users register a commitment: keccak256(abi.encodePacked(secret, nullifier)) - To verify, users provide (secret, nullifier) and we recompute the hash - This proves they know the secret without revealing it on-chain  Future Groth16 Upgrade: - Replace hash verification with zkSNARK proof verification - Use Groth16 verifier contract for cryptographic proof validation - Integrate with circom circuits for eligibility and range proofs\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"batchRegisterCommitments(address[],bytes32[])\":{\"details\":\"Useful for onboarding multiple users\",\"params\":{\"commitments\":\"Array of commitment hashes\",\"users\":\"Array of user addresses\"}},\"getCommitment(address)\":{\"params\":{\"user\":\"Address to query\"},\"returns\":{\"_0\":\"commitment The commitment struct\"}},\"hasActiveCommitment(address)\":{\"params\":{\"user\":\"Address to check\"},\"returns\":{\"_0\":\"bool True if user has active commitment\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"registerCommitment(bytes32)\":{\"details\":\"Users must register before they can be verified      Commitment = keccak256(abi.encodePacked(secret, nullifier))\",\"params\":{\"commitment\":\"The hash commitment (hash of secret + nullifier)\"}},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"revokeCommitment(address)\":{\"params\":{\"user\":\"Address whose commitment to revoke\"}},\"setRangeCommitment(uint256,address,bytes32)\":{\"details\":\"This allows holders to commit to their balance for future range proofs\",\"params\":{\"commitment\":\"The commitment hash for range proof\",\"holder\":\"The holder address\",\"tokenId\":\"The token ID\"}},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"},\"updateHolderVerification(uint256,address,bool)\":{\"details\":\"Allows admin to manually verify token holders\",\"params\":{\"holder\":\"The holder address\",\"isVerified\":\"Verification status\",\"tokenId\":\"The token ID\"}},\"verifyEligibility(address,bytes32,bytes)\":{\"details\":\"MVP: Verifies that keccak256(proof) matches stored commitment      Future: Will use Groth16 verifier for full zkSNARK verification\",\"params\":{\"commitment\":\"The commitment to verify against\",\"proof\":\"ZK proof data containing (secret, nullifier) as abi.encodePacked\",\"user\":\"Address of the user to verify\"},\"returns\":{\"_0\":\"bool True if verification succeeds\"}},\"verifyRangeProof(uint256,address,uint256,uint256,bytes)\":{\"details\":\"MVP: Simple eligibility check + range validation      Future: Full Groth16 range proof circuit verification            The range proof allows a holder to prove their balance is within      [minRange, maxRange] without revealing the exact amount.            For Groth16 upgrade, proof will contain:      - Private inputs: actualAmount, secret      - Public inputs: minRange, maxRange, commitment      - Proof that minRange <= actualAmount <= maxRange\",\"params\":{\"holder\":\"Address of the token holder\",\"maxRange\":\"Maximum claimed range\",\"minRange\":\"Minimum claimed range\",\"proof\":\"ZK proof data\",\"tokenId\":\"The ID of the token\"},\"returns\":{\"_0\":\"bool True if the holder's balance is within [minRange, maxRange]\"}}},\"title\":\"ZKVerifier\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"batchRegisterCommitments(address[],bytes32[])\":{\"notice\":\"Batch register commitments (admin utility)\"},\"getCommitment(address)\":{\"notice\":\"Get commitment details for a user\"},\"hasActiveCommitment(address)\":{\"notice\":\"Check if a user has an active commitment\"},\"registerCommitment(bytes32)\":{\"notice\":\"Register a commitment for a user\"},\"revokeCommitment(address)\":{\"notice\":\"Revoke a user's commitment (admin function)\"},\"setRangeCommitment(uint256,address,bytes32)\":{\"notice\":\"Set range commitment for a token holder\"},\"updateHolderVerification(uint256,address,bool)\":{\"notice\":\"Update verification status for a token holder\"},\"verifyEligibility(address,bytes32,bytes)\":{\"notice\":\"Verify user eligibility using ZK proof\"},\"verifyRangeProof(uint256,address,uint256,uint256,bytes)\":{\"notice\":\"Verify range proof for token holdings\"}},\"notice\":\"Verify ZK-KYC proofs for issuer/buyer eligibility\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/ZKVerifier.sol\":\"ZKVerifier\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/\",\":@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/\",\":erc4626-tests/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/erc4626-tests/\",\":forge-std/=../lib/openzeppelin-contracts/lib/forge-std/src/\",\":halmos-cheatcodes/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/\",\":openzeppelin-contracts/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/contracts/\",\":pyth-sdk-solidity/=lib/pyth-sdk-solidity/\"],\"viaIR\":true},\"sources\":{\"../lib/openzeppelin-contracts/contracts/access/Ownable.sol\":{\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6\",\"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a\"]},\"../lib/openzeppelin-contracts/contracts/utils/Context.sol\":{\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12\",\"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF\"]},\"src/ZKVerifier.sol\":{\"keccak256\":\"0xc6022dcf497830121fe4c7067948c2cd436645dd43b71cb6cb604a5976585117\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://a762f76277a952f8777bd0a3631e928322a43c8e60782ce00a8e0356d923bef6\",\"dweb:/ipfs/Qmc9jHwyAUhxGusev7Ki73MWC62RFB7xVeYhdFLurG7wWM\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": { "version": "0.8.24+commit.e11b9ed9" },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+        { "inputs": [], "type": "error", "name": "CommitmentAlreadyExists" },
+        { "inputs": [], "type": "error", "name": "CommitmentMismatch" },
+        { "inputs": [], "type": "error", "name": "InvalidProof" },
+        { "inputs": [], "type": "error", "name": "InvalidRange" },
+        { "inputs": [], "type": "error", "name": "NoActiveCommitment" },
+        {
+          "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }],
+          "type": "error",
+          "name": "OwnableInvalidOwner"
+        },
+        {
+          "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
+          "type": "error",
+          "name": "OwnableUnauthorizedAccount"
+        },
+        { "inputs": [], "type": "error", "name": "ZeroCommitment" },
+        {
+          "inputs": [
+            { "internalType": "address", "name": "user", "type": "address", "indexed": true },
+            {
+              "internalType": "bytes32",
+              "name": "commitment",
+              "type": "bytes32",
+              "indexed": false
+            },
+            { "internalType": "uint256", "name": "timestamp", "type": "uint256", "indexed": false }
+          ],
+          "type": "event",
+          "name": "CommitmentRegistered",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            { "internalType": "address", "name": "user", "type": "address", "indexed": true }
+          ],
+          "type": "event",
+          "name": "CommitmentRevoked",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            { "internalType": "address", "name": "user", "type": "address", "indexed": true },
+            { "internalType": "bool", "name": "isEligible", "type": "bool", "indexed": false }
+          ],
+          "type": "event",
+          "name": "EligibilityVerified",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true
+            },
+            { "internalType": "address", "name": "newOwner", "type": "address", "indexed": true }
+          ],
+          "type": "event",
+          "name": "OwnershipTransferred",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            { "internalType": "uint256", "name": "tokenId", "type": "uint256", "indexed": true },
+            { "internalType": "address", "name": "holder", "type": "address", "indexed": true },
+            { "internalType": "bytes32", "name": "commitment", "type": "bytes32", "indexed": false }
+          ],
+          "type": "event",
+          "name": "RangeCommitmentSet",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            { "internalType": "uint256", "name": "tokenId", "type": "uint256", "indexed": true },
+            { "internalType": "address", "name": "holder", "type": "address", "indexed": true },
+            { "internalType": "bool", "name": "isValid", "type": "bool", "indexed": false }
+          ],
+          "type": "event",
+          "name": "RangeProofVerified",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            { "internalType": "address[]", "name": "users", "type": "address[]" },
+            { "internalType": "bytes32[]", "name": "commitments", "type": "bytes32[]" }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "batchRegisterCommitments"
+        },
+        {
+          "inputs": [{ "internalType": "address", "name": "user", "type": "address" }],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getCommitment",
+          "outputs": [
+            {
+              "internalType": "struct ZKVerifier.Commitment",
+              "name": "",
+              "type": "tuple",
+              "components": [
+                { "internalType": "bytes32", "name": "commitmentHash", "type": "bytes32" },
+                { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+                { "internalType": "bool", "name": "isActive", "type": "bool" }
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [{ "internalType": "address", "name": "user", "type": "address" }],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "hasActiveCommitment",
+          "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "owner",
+          "outputs": [{ "internalType": "address", "name": "", "type": "address" }]
+        },
+        {
+          "inputs": [
+            { "internalType": "uint256", "name": "", "type": "uint256" },
+            { "internalType": "address", "name": "", "type": "address" }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "rangeCommitments",
+          "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }]
+        },
+        {
+          "inputs": [{ "internalType": "bytes32", "name": "commitment", "type": "bytes32" }],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "registerCommitment"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "renounceOwnership"
+        },
+        {
+          "inputs": [{ "internalType": "address", "name": "user", "type": "address" }],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "revokeCommitment"
+        },
+        {
+          "inputs": [
+            { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+            { "internalType": "address", "name": "holder", "type": "address" },
+            { "internalType": "bytes32", "name": "commitment", "type": "bytes32" }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "setRangeCommitment"
+        },
+        {
+          "inputs": [
+            { "internalType": "uint256", "name": "", "type": "uint256" },
+            { "internalType": "address", "name": "", "type": "address" }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "tokenHolderVerified",
+          "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }]
+        },
+        {
+          "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "transferOwnership"
+        },
+        {
+          "inputs": [
+            { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+            { "internalType": "address", "name": "holder", "type": "address" },
+            { "internalType": "bool", "name": "isVerified", "type": "bool" }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "updateHolderVerification"
+        },
+        {
+          "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "userCommitments",
+          "outputs": [
+            { "internalType": "bytes32", "name": "commitmentHash", "type": "bytes32" },
+            { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+            { "internalType": "bool", "name": "isActive", "type": "bool" }
+          ]
+        },
+        {
+          "inputs": [
+            { "internalType": "address", "name": "user", "type": "address" },
+            { "internalType": "bytes32", "name": "commitment", "type": "bytes32" },
+            { "internalType": "bytes", "name": "proof", "type": "bytes" }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "verifyEligibility",
+          "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }]
+        },
+        {
+          "inputs": [
+            { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+            { "internalType": "address", "name": "holder", "type": "address" },
+            { "internalType": "uint256", "name": "minRange", "type": "uint256" },
+            { "internalType": "uint256", "name": "maxRange", "type": "uint256" },
+            { "internalType": "bytes", "name": "proof", "type": "bytes" }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "verifyRangeProof",
+          "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {
+          "batchRegisterCommitments(address[],bytes32[])": {
+            "details": "Useful for onboarding multiple users",
+            "params": {
+              "commitments": "Array of commitment hashes",
+              "users": "Array of user addresses"
+            }
+          },
+          "getCommitment(address)": {
+            "params": { "user": "Address to query" },
+            "returns": { "_0": "commitment The commitment struct" }
+          },
+          "hasActiveCommitment(address)": {
+            "params": { "user": "Address to check" },
+            "returns": { "_0": "bool True if user has active commitment" }
+          },
+          "owner()": { "details": "Returns the address of the current owner." },
+          "registerCommitment(bytes32)": {
+            "details": "Users must register before they can be verified      Commitment = keccak256(abi.encodePacked(secret, nullifier))",
+            "params": { "commitment": "The hash commitment (hash of secret + nullifier)" }
+          },
+          "renounceOwnership()": {
+            "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+          },
+          "revokeCommitment(address)": {
+            "params": { "user": "Address whose commitment to revoke" }
+          },
+          "setRangeCommitment(uint256,address,bytes32)": {
+            "details": "This allows holders to commit to their balance for future range proofs",
+            "params": {
+              "commitment": "The commitment hash for range proof",
+              "holder": "The holder address",
+              "tokenId": "The token ID"
+            }
+          },
+          "transferOwnership(address)": {
+            "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+          },
+          "updateHolderVerification(uint256,address,bool)": {
+            "details": "Allows admin to manually verify token holders",
+            "params": {
+              "holder": "The holder address",
+              "isVerified": "Verification status",
+              "tokenId": "The token ID"
+            }
+          },
+          "verifyEligibility(address,bytes32,bytes)": {
+            "details": "MVP: Verifies that keccak256(proof) matches stored commitment      Future: Will use Groth16 verifier for full zkSNARK verification",
+            "params": {
+              "commitment": "The commitment to verify against",
+              "proof": "ZK proof data containing (secret, nullifier) as abi.encodePacked",
+              "user": "Address of the user to verify"
+            },
+            "returns": { "_0": "bool True if verification succeeds" }
+          },
+          "verifyRangeProof(uint256,address,uint256,uint256,bytes)": {
+            "details": "MVP: Simple eligibility check + range validation      Future: Full Groth16 range proof circuit verification            The range proof allows a holder to prove their balance is within      [minRange, maxRange] without revealing the exact amount.            For Groth16 upgrade, proof will contain:      - Private inputs: actualAmount, secret      - Public inputs: minRange, maxRange, commitment      - Proof that minRange <= actualAmount <= maxRange",
+            "params": {
+              "holder": "Address of the token holder",
+              "maxRange": "Maximum claimed range",
+              "minRange": "Minimum claimed range",
+              "proof": "ZK proof data",
+              "tokenId": "The ID of the token"
+            },
+            "returns": { "_0": "bool True if the holder's balance is within [minRange, maxRange]" }
+          }
+        },
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {
+          "batchRegisterCommitments(address[],bytes32[])": {
+            "notice": "Batch register commitments (admin utility)"
+          },
+          "getCommitment(address)": { "notice": "Get commitment details for a user" },
+          "hasActiveCommitment(address)": { "notice": "Check if a user has an active commitment" },
+          "registerCommitment(bytes32)": { "notice": "Register a commitment for a user" },
+          "revokeCommitment(address)": { "notice": "Revoke a user's commitment (admin function)" },
+          "setRangeCommitment(uint256,address,bytes32)": {
+            "notice": "Set range commitment for a token holder"
+          },
+          "updateHolderVerification(uint256,address,bool)": {
+            "notice": "Update verification status for a token holder"
+          },
+          "verifyEligibility(address,bytes32,bytes)": {
+            "notice": "Verify user eligibility using ZK proof"
+          },
+          "verifyRangeProof(uint256,address,uint256,uint256,bytes)": {
+            "notice": "Verify range proof for token holdings"
+          }
+        },
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        "@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/",
+        "@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/",
+        "erc4626-tests/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/erc4626-tests/",
+        "forge-std/=../lib/openzeppelin-contracts/lib/forge-std/src/",
+        "halmos-cheatcodes/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+        "openzeppelin-contracts/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/contracts/",
+        "pyth-sdk-solidity/=lib/pyth-sdk-solidity/"
+      ],
+      "optimizer": { "enabled": true, "runs": 200 },
+      "metadata": { "bytecodeHash": "ipfs" },
+      "compilationTarget": { "src/ZKVerifier.sol": "ZKVerifier" },
+      "evmVersion": "cancun",
+      "libraries": {},
+      "viaIR": true
+    },
+    "sources": {
+      "../lib/openzeppelin-contracts/contracts/access/Ownable.sol": {
+        "keccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb",
+        "urls": [
+          "bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6",
+          "dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
+        ],
+        "license": "MIT"
+      },
+      "../lib/openzeppelin-contracts/contracts/utils/Context.sol": {
+        "keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
+        "urls": [
+          "bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12",
+          "dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
+        ],
+        "license": "MIT"
+      },
+      "src/ZKVerifier.sol": {
+        "keccak256": "0xc6022dcf497830121fe4c7067948c2cd436645dd43b71cb6cb604a5976585117",
+        "urls": [
+          "bzz-raw://a762f76277a952f8777bd0a3631e928322a43c8e60782ce00a8e0356d923bef6",
+          "dweb:/ipfs/Qmc9jHwyAUhxGusev7Ki73MWC62RFB7xVeYhdFLurG7wWM"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "id": 80
+}

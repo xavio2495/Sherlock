@@ -1,26 +1,226 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Carme&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Custom Fonts */
+@font-face {
+  font-family: 'Newton Howard';
+  src: url('/fonts/NewtonHoward-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
+
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-body);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-heading);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-zk-proof: var(--zk-proof);
+  --color-zk-verified: var(--zk-verified);
+  --color-warning: var(--warning);
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+  --radius-3xl: 0;
+  --radius-4xl: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* Brutalist Design System */
+  --radius: 0;
+
+  /* Custom Fonts */
+  --font-heading: 'Newton Howard', sans-serif;
+  --font-body: 'Carme', sans-serif;
+
+  /* Primary Colors - Brutalist Palette */
+  --background: #01040f;
+  --foreground: #ddffde;
+  --card: #01040f;
+  --card-foreground: #ddffde;
+  --popover: #01040f;
+  --popover-foreground: #ddffde;
+  --primary: #ddffde;
+  --primary-foreground: #01040f;
+  --secondary: #01040f;
+  --secondary-foreground: #ddffde;
+  --muted: #0a1f0b;
+  --muted-foreground: #ddffde;
+  --accent: #ddffde;
+  --accent-foreground: #01040f;
+
+  /* Border Colors - ZK Purple & Warning Red as accents only */
+  --zk-proof: #8b5cf6;
+  --zk-verified: #10b981;
+  --warning: #ef4444;
+  --destructive: #ef4444;
+  --border: #ddffde;
+  --input: #ddffde;
+  --ring: #ddffde;
+
+  /* Chart Colors - Brutalist palette */
+  --chart-1: #ddffde;
+  --chart-2: #8b5cf6;
+  --chart-3: #10b981;
+  --chart-4: #ef4444;
+  --chart-5: #01040f;
+
+  /* Sidebar */
+  --sidebar: #01040f;
+  --sidebar-foreground: #ddffde;
+  --sidebar-primary: #ddffde;
+  --sidebar-primary-foreground: #01040f;
+  --sidebar-accent: #ddffde;
+  --sidebar-accent-foreground: #01040f;
+  --sidebar-border: #ddffde;
+  --sidebar-ring: #ddffde;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    border-radius: 0 !important;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: normal;
+  }
+
+  /* Brutalist Borders - Thick and Solid */
+  .border-brutalist {
+    border-width: 3px;
+    border-style: solid;
+    border-color: var(--border);
+  }
+
+  .border-zk {
+    border-color: var(--zk-proof);
+  }
+
+  .border-verified {
+    border-color: var(--zk-verified);
+  }
+
+  .border-warning {
+    border-color: var(--warning);
+  }
+
+  /* CSS Patterns for Minimalistic Design - Low Opacity */
+  .pattern-grid {
+    background-image:
+      linear-gradient(rgba(221, 255, 222, 0.05) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(221, 255, 222, 0.05) 2px, transparent 2px);
+    background-size: 50px 50px;
+  }
+
+  .pattern-dots {
+    background-image: radial-gradient(circle, rgba(221, 255, 222, 0.05) 2px, transparent 2px);
+    background-size: 20px 20px;
+  }
+
+  .pattern-diagonal {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(221, 255, 222, 0.05),
+      rgba(221, 255, 222, 0.05) 2px,
+      transparent 2px,
+      transparent 10px
+    );
+  }
+
+  .pattern-diagonal-vertical {
+    background-image: repeating-linear-gradient(
+      90deg,
+      rgba(221, 255, 222, 0.05),
+      rgba(221, 255, 222, 0.05) 2px,
+      transparent 2px,
+      transparent 10px
+    );
+  }
+
+  .pattern-diagonal-left {
+    background-image: repeating-linear-gradient(
+      135deg,
+      rgba(221, 255, 222, 0.05),
+      rgba(221, 255, 222, 0.05) 2px,
+      transparent 2px,
+      transparent 10px
+    );
+  }
+
+  .pattern-v {
+    background-image:
+      repeating-linear-gradient(
+        135deg,
+        rgba(221, 255, 222, 0.05),
+        rgba(221, 255, 222, 0.05) 2px,
+        transparent 2px,
+        transparent 10px
+      ),
+      repeating-linear-gradient(
+        45deg,
+        rgba(221, 255, 222, 0.05),
+        rgba(221, 255, 222, 0.05) 2px,
+        transparent 2px,
+        transparent 10px
+      );
+  }
+  /* Minimalistic Shadows - Subtle border glow */
+  .shadow-brutalist {
+    box-shadow: 0 0 0 1px rgba(221, 255, 222, 0.2);
+  }
+
+  .shadow-brutalist-sm {
+    box-shadow: 0 0 0 1px rgba(221, 255, 222, 0.15);
+  }
+
+  .shadow-brutalist-lg {
+    box-shadow: 0 0 0 1px rgba(221, 255, 222, 0.25);
+  }
 }

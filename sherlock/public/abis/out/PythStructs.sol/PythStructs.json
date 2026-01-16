@@ -1,0 +1,53 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x608080604052346013576039908160188239f35b5f80fdfe5f80fdfea264697066735822122054b60301e5fb8a73de4bc9391a6eb5e6ab1b336572a72aa4eb4c17255771af9a64736f6c63430008180033",
+    "sourceMap": "512:1087:74:-:0;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x5f80fdfea264697066735822122054b60301e5fb8a73de4bc9391a6eb5e6ab1b336572a72aa4eb4c17255771af9a64736f6c63430008180033",
+    "sourceMap": "512:1087:74:-:0;;",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {},
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"custom:deprecated\":\"Repository scheduled for deletion on 1\\u202fAugust\\u202f2025.                    Use `pythnetwork pyth-sdk-solidity` instead.\",\"details\":\"Switch to the maintained package:         `npm install pythnetwork pyth-sdk-solidity`         Migration guide:         https://docs.pyth.network/price-feeds/use-real-time-data/evm\",\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"**Deprecated** \\u2013 this codebase will be removed on **1\\u202fAugust\\u202f2025**.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"lib/pyth-sdk-solidity/PythStructs.sol\":\"PythStructs\"},\"evmVersion\":\"cancun\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/\",\":@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/\",\":erc4626-tests/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/erc4626-tests/\",\":forge-std/=../lib/openzeppelin-contracts/lib/forge-std/src/\",\":halmos-cheatcodes/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/\",\":openzeppelin-contracts/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/contracts/\",\":pyth-sdk-solidity/=lib/pyth-sdk-solidity/\"],\"viaIR\":true},\"sources\":{\"lib/pyth-sdk-solidity/PythStructs.sol\":{\"keccak256\":\"0xa0df6a9bfd423c573aaaefbc5e65d933ad2bb671564f78803a048ca0dad4ffa6\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://567222d7750a23db74cb0350929e6f35a5f459ea9066276be696fe4a69478706\",\"dweb:/ipfs/QmevUmYUqwdyaKQACwJbg9osTgGDYfbbiqkTZiSXjnMEEe\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": { "version": "0.8.24+commit.e11b9ed9" },
+    "language": "Solidity",
+    "output": {
+      "abi": [],
+      "devdoc": { "kind": "dev", "methods": {}, "version": 1 },
+      "userdoc": { "kind": "user", "methods": {}, "version": 1 }
+    },
+    "settings": {
+      "remappings": [
+        "@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/",
+        "@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/",
+        "erc4626-tests/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/erc4626-tests/",
+        "forge-std/=../lib/openzeppelin-contracts/lib/forge-std/src/",
+        "halmos-cheatcodes/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+        "openzeppelin-contracts/=/home/sigma_coder/Hacks/Mantle/Sherlock/lib/openzeppelin-contracts/contracts/",
+        "pyth-sdk-solidity/=lib/pyth-sdk-solidity/"
+      ],
+      "optimizer": { "enabled": true, "runs": 200 },
+      "metadata": { "bytecodeHash": "ipfs" },
+      "compilationTarget": { "lib/pyth-sdk-solidity/PythStructs.sol": "PythStructs" },
+      "evmVersion": "cancun",
+      "libraries": {},
+      "viaIR": true
+    },
+    "sources": {
+      "lib/pyth-sdk-solidity/PythStructs.sol": {
+        "keccak256": "0xa0df6a9bfd423c573aaaefbc5e65d933ad2bb671564f78803a048ca0dad4ffa6",
+        "urls": [
+          "bzz-raw://567222d7750a23db74cb0350929e6f35a5f459ea9066276be696fe4a69478706",
+          "dweb:/ipfs/QmevUmYUqwdyaKQACwJbg9osTgGDYfbbiqkTZiSXjnMEEe"
+        ],
+        "license": "Apache-2.0"
+      }
+    },
+    "version": 1
+  },
+  "id": 74
+}
