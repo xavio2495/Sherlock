@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   description:
     'Privacy-focused Real World Asset tokenization platform with ZK proofs and oracle integration on Mantle',
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: '/logo-l.png',
+    apple: '/logo-l.png',
   },
 };
 

@@ -59,7 +59,7 @@ export function useMintRWA(): UseMintRWAReturn {
 
       // Step 3: Set proof generation status
       setProofStatus('generating');
-      toast.info('⏳ Generating ZK proof...');
+      toast.info('⏳ Generating ZK proof and minting token (this may take 1-2 minutes)...');
 
       try {
         // Step 4: Call backend API to mint RWA

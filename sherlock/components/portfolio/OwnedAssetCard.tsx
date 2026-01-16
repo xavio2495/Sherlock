@@ -4,16 +4,16 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Lock, TrendingUp, Layers } from 'lucide-react';
-import type { AssetWithId } from '@/lib/contracts';
+import type { AssetWithBackendData } from '@/types';
 
 interface OwnedAssetCardProps {
-  asset: AssetWithId;
+  asset: AssetWithBackendData;
   balance: number;
   onGenerateProof: () => void;
 }
 
 export function OwnedAssetCard({ asset, balance, onGenerateProof }: OwnedAssetCardProps) {
-  const pricePerFraction = asset.totalValue / asset.fractionCount;
+  const pricePerFraction = asset.pricePerFraction;
   const currentValue = balance * pricePerFraction;
   const exactOwnershipPercent = (balance / asset.fractionCount) * 100;
 

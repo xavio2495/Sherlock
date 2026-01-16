@@ -51,6 +51,15 @@ export class RWAService {
       logger.info(`Minting RWA token with update fee: ${updateFee.toString()}`);
 
       // Step 4: Call mintRWAToken on RWATokenFactory
+      logger.info(`Calling mintRWAToken with params:`, {
+        documentHash: request.documentHash,
+        totalValue: request.totalValue,
+        fractionCount: request.fractionCount,
+        minFractionSize: request.minFractionSize,
+        lockupPeriod: request.lockupPeriod,
+        updateFee: updateFee.toString(),
+      });
+
       const tx = await contractService.contracts.rwaFactory.mintRWAToken(
         request.documentHash,
         request.totalValue,
@@ -63,8 +72,10 @@ export class RWAService {
       );
 
       logger.info(`RWA token mint transaction sent: ${tx.hash}`);
+      logger.info(`Waiting for transaction confirmation (this may take 30-60 seconds)...`);
 
       const receipt = await tx.wait();
+      logger.info(`Transaction confirmed in block ${receipt.blockNumber}`);
 
       // Parse tokenId from events
       const event = receipt.logs.find((log: any) => {

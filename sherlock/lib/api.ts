@@ -16,7 +16,7 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // 30 second timeout
+  timeout: 120000, // 120 second timeout (2 minutes) for blockchain transactions
 });
 
 // Request interceptor for adding authentication
@@ -38,7 +38,7 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     // Log error to console
-    console.error('API Error:', error.response?.data || error.message);
+    //console.log('API Error:', error.response?.data || error.message);
 
     // Handle different error scenarios
     let errorMessage = 'An unexpected error occurred';
@@ -92,9 +92,13 @@ api.interceptors.response.use(
 
 /**
  * Mint a new RWA token
+ * Note: This can take 60-90 seconds on Mantle Testnet due to transaction confirmation time
  */
 export async function mintRWA(data: MintRWAInput): Promise<MintRWAResponse> {
-  const response = await api.post<MintRWAResponse>('/rwa/create', data);
+  // Use extended timeout for minting (which includes ZK proof generation + blockchain tx)
+  const response = await api.post<MintRWAResponse>('/rwa/create', data, {
+    timeout: 180000, // 3 minutes for minting specifically
+  });
   return response.data;
 }
 
@@ -120,6 +124,30 @@ export async function generateZKProof(data: ZKProofInput): Promise<ZKProofRespon
 export async function getOraclePrices(): Promise<OraclePricesResponse> {
   const response = await api.get<OraclePricesResponse>('/oracle/prices');
   return response.data;
+}
+
+/**
+ * Get asset metadata for a specific RWA token from backend
+ * Includes on-chain metadata, fraction specs, and economics
+ */
+export async function getAssetMetadata(tokenId: number) {
+  const response = await api.get(`/rwa/${tokenId}`);
+  return response.data;
+}
+
+/**
+ * Get metadata for all minted RWA tokens
+ * Fetches metadata for token IDs 1 through maxTokenId
+ */
+export async function getAllAssets() {
+  // First, try to get tokens 1-20 and filter out non-existent ones
+  const promises = Array.from({ length: 20 }, (_, i) => 
+    getAssetMetadata(i + 1).catch(() => null)
+  );
+  const results = await Promise.all(promises);
+  return results.filter((result): result is NonNullable<typeof result> => 
+    result !== null && result.success === true
+  );
 }
 
 // Export the axios instance for custom requests

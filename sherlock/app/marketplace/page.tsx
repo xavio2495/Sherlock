@@ -3,7 +3,7 @@
 import { useState, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAllAssets } from '@/hooks/useRWAContract';
+import { useAllAssetsFromBackend } from '@/hooks/useBackendAssets';
 import { AssetCard } from '@/components/marketplace/AssetCard';
 import { PurchaseModal } from '@/components/marketplace/PurchaseModal';
 import { AssetCardSkeleton } from '@/components/shared/AssetCardSkeleton';
@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AssetWithId } from '@/lib/contracts';
+import type { AssetWithBackendData } from '@/types';
 import { ArrowUpDown, Filter } from 'lucide-react';
 
 const ASSET_TYPES = ['All', 'Invoice', 'Bond', 'Real Estate'] as const;
@@ -39,14 +39,14 @@ function MarketplaceContent() {
   const filterParam = (searchParams.get('filter') as AssetType) || 'All';
   const sortParam = (searchParams.get('sort') as SortOption) || 'newest';
 
-  const [selectedAsset, setSelectedAsset] = useState<AssetWithId | null>(null);
+  const [selectedAsset, setSelectedAsset] = useState<AssetWithBackendData | null>(null);
 
-  // Fetch all assets with 30s refresh (pauses when tab not focused)
+  // Fetch all assets with 30s refresh from backend API (pauses when tab not focused)
   const {
     data: assets,
     isLoading,
     error,
-  } = useAllAssets({
+  } = useAllAssetsFromBackend({
     refetchInterval: 30000,
     refetchOnWindowFocus: false,
   });
@@ -78,10 +78,9 @@ function MarketplaceContent() {
       return asset.assetType === filterParam;
     });
 
-    // Filter out fully sold assets
+    // Filter out fully sold assets (use availableFractions from backend)
     filtered = filtered.filter((asset) => {
-      const availableFractions = asset.fractionCount - (asset.soldFractions || 0);
-      return availableFractions > 0;
+      return asset.availableFractions > 0;
     });
 
     // Sort assets
@@ -94,8 +93,8 @@ function MarketplaceContent() {
         case 'value-low':
           return a.totalValue - b.totalValue;
         case 'availability': {
-          const availA = a.fractionCount - (a.soldFractions || 0);
-          const availB = b.fractionCount - (b.soldFractions || 0);
+          const availA = a.availableFractions;
+          const availB = b.availableFractions;
           return availB - availA;
         }
         default:

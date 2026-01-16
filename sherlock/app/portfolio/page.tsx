@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import Link from 'next/link';
-import { useAllAssets } from '@/hooks/useRWAContract';
+import { useAllAssetsFromBackend } from '@/hooks/useBackendAssets';
 import { useReadContracts } from 'wagmi';
 import { CONTRACTS } from '@/lib/contracts';
 import { OwnedAssetCard } from '@/components/portfolio/OwnedAssetCard';
@@ -14,9 +14,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Wallet, TrendingUp, Shield, AlertCircle } from 'lucide-react';
-import type { AssetWithId } from '@/lib/contracts';
+import type { AssetWithBackendData } from '@/types';
 
-interface OwnedAsset extends AssetWithId {
+interface OwnedAsset extends AssetWithBackendData {
   balance: number;
 }
 
@@ -27,7 +27,7 @@ interface ProofModalState {
 
 export default function PortfolioPage() {
   const { address, isConnected } = useAccount();
-  const { data: allAssets, isLoading: assetsLoading } = useAllAssets();
+  const { data: allAssets, isLoading: assetsLoading } = useAllAssetsFromBackend();
   const [proofModal, setProofModal] = useState<ProofModalState>({
     isOpen: false,
     asset: null,
@@ -68,11 +68,10 @@ export default function PortfolioPage() {
     return owned;
   }, [allAssets, balanceQueries.data]);
 
-  // Calculate total portfolio value
+  // Calculate total portfolio value (use pricePerFraction from backend)
   const totalPortfolioValue = useMemo(() => {
     return ownedAssets.reduce((total, asset) => {
-      const pricePerFraction = asset.totalValue / asset.fractionCount;
-      const assetValue = asset.balance * pricePerFraction;
+      const assetValue = asset.balance * asset.pricePerFraction;
       return total + assetValue;
     }, 0);
   }, [ownedAssets]);

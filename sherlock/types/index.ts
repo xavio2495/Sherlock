@@ -87,6 +87,55 @@ export interface OraclePricesResponse {
   prices: PriceData[];
 }
 
+// ============ Backend Asset Metadata Types ============
+
+export interface AssetMetadataResponse {
+  success: boolean;
+  tokenId: number;
+  metadata: {
+    issuer: string;
+    documentHash: string;
+    totalValue: number;
+    fractionCount: number;
+    minFractionSize: number;
+    mintTimestamp: number;
+    oraclePriceAtMint: number;
+    verified: boolean;
+  };
+  fractionSpec: {
+    totalSupply: number;
+    minUnitSize: number;
+    lockupPeriod: number;
+    lockupEnd: number;
+    isActive: boolean;
+  };
+  economics: {
+    pricePerFraction: string;
+    availableFractions: number;
+    soldFractions: number;
+    availableValue: string;
+    soldValue: string;
+  };
+}
+
+export interface AssetWithBackendData {
+  tokenId: number;
+  issuer: `0x${string}`;
+  documentHash: string;
+  totalValue: number;
+  fractionCount: number;
+  minFractionSize: number;
+  mintTimestamp: number;
+  oraclePriceAtMint: number;
+  verified: boolean;
+  assetType: string;
+  soldFractions: number;
+  availableFractions: number;
+  pricePerFraction: number;
+  isActive: boolean;
+  priceId: `0x${string}`; // Required for PurchaseModal compatibility
+}
+
 // ============ Error Types ============
 
 export interface APIError {

@@ -4,17 +4,17 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, User, Layers } from 'lucide-react';
-import type { AssetWithId } from '@/lib/contracts';
+import type { AssetWithBackendData } from '@/types';
 
 interface AssetCardProps {
-  asset: AssetWithId;
+  asset: AssetWithBackendData;
   onPurchaseClick: () => void;
 }
 
 export function AssetCard({ asset, onPurchaseClick }: AssetCardProps) {
   const totalValue = asset.totalValue / 100; // Convert from cents
-  const available = asset.fractionCount - asset.soldFractions;
-  const pricePerFraction = totalValue / asset.fractionCount;
+  const available = asset.availableFractions;
+  const pricePerFraction = asset.pricePerFraction;
   const isSoldOut = available === 0;
 
   // Format oracle price (assuming it's in same format as backend returns)
