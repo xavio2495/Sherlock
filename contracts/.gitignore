@@ -1,6 +1,6 @@
 lib
-contracts/cache
+cache
 out
 .github
-contracts/.env
-contracts/broadcast
+.env
+broadcast
