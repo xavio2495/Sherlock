@@ -13,8 +13,6 @@ Sherlock focuses on integrating zero-knowledge (ZK) proofs for privacy with real
 
 #### Live Demo: https://sherlock-mantle.vercel.app
 
-#### Demo Video: https://drive.google.com/drive/folders/1miwB63FiDyEvrVovSTXwVfOKRRVPdSFg?usp=sharing
-
 ## Key Features and Workflow
 
 #### 1. Issuer-Driven RWA Tokenization:
